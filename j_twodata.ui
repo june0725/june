@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>J_TwoData</class>
+ <widget class="QDialog" name="J_TwoData">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>748</width>
+    <height>563</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>TwoData</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>问题</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QTextEdit" name="ask"/>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="title">
+        <string>回答</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QTextEdit" name="answer"/>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox_3">
+       <property name="title">
+        <string>答案</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QTextEdit" name="answers"/>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QPushButton" name="go_up">
+         <property name="text">
+          <string>上一个</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="go_ok">
+         <property name="text">
+          <string>确定</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="go_ng">
+         <property name="text">
+          <string>输入</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="go_dw">
+         <property name="text">
+          <string>下一个</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>go_dw</sender>
+   <signal>clicked()</signal>
+   <receiver>J_TwoData</receiver>
+   <slot>getdw()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>633</x>
+     <y>493</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>373</x>
+     <y>281</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>go_ng</sender>
+   <signal>clicked()</signal>
+   <receiver>J_TwoData</receiver>
+   <slot>clean()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>458</x>
+     <y>493</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>373</x>
+     <y>281</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>go_ok</sender>
+   <signal>clicked()</signal>
+   <receiver>J_TwoData</receiver>
+   <slot>receive()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>282</x>
+     <y>493</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>373</x>
+     <y>281</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>go_up</sender>
+   <signal>clicked()</signal>
+   <receiver>J_TwoData</receiver>
+   <slot>getup()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>106</x>
+     <y>493</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>373</x>
+     <y>281</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

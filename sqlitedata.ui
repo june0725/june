@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SQLiteData</class>
+ <widget class="QDialog" name="SQLiteData">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>596</width>
+    <height>567</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_6">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
+     </property>
+     <widget class="QWidget" name="tabdatafile">
+      <attribute name="title">
+       <string>数据文件</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>数据文件目录</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QListWidget" name="filelists">
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="viewMode">
+                <enum>QListView::ListMode</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <widget class="QLabel" name="label_3">
+               <property name="text">
+                <string>数据表目录</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QListWidget" name="tablelists">
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="viewMode">
+                <enum>QListView::ListMode</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonopen">
+             <property name="maximumSize">
+              <size>
+               <width>60</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>打开</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonview">
+             <property name="maximumSize">
+              <size>
+               <width>60</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>预览</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabdata">
+      <attribute name="title">
+       <string>数据预览</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QTableView" name="dataviews"/>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>tablelists</sender>
+   <signal>itemClicked(QListWidgetItem*)</signal>
+   <receiver>SQLiteData</receiver>
+   <slot>viewfiles(QListWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>435</x>
+     <y>291</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>297</x>
+     <y>283</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>filelists</sender>
+   <signal>itemClicked(QListWidgetItem*)</signal>
+   <receiver>SQLiteData</receiver>
+   <slot>viewfiles(QListWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>159</x>
+     <y>291</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>297</x>
+     <y>283</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonopen</sender>
+   <signal>clicked()</signal>
+   <receiver>SQLiteData</receiver>
+   <slot>Getopendata()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>474</x>
+     <y>526</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>297</x>
+     <y>283</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonview</sender>
+   <signal>clicked()</signal>
+   <receiver>SQLiteData</receiver>
+   <slot>Viewchoosedata()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>540</x>
+     <y>526</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>297</x>
+     <y>283</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

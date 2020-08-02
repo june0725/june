@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>June_Main</class>
+ <widget class="QMainWindow" name="June_Main">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>June_Main</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionopen">
+   <property name="text">
+    <string>打开</string>
+   </property>
+  </action>
+  <action name="actionsave">
+   <property name="text">
+    <string>保存</string>
+   </property>
+  </action>
+  <action name="actionexit">
+   <property name="text">
+    <string>退出</string>
+   </property>
+  </action>
+  <action name="actionword">
+   <property name="text">
+    <string>单词</string>
+   </property>
+  </action>
+  <action name="actionlisten">
+   <property name="text">
+    <string>听力</string>
+   </property>
+  </action>
+  <action name="actiontranslate">
+   <property name="text">
+    <string>翻译</string>
+   </property>
+  </action>
+  <action name="actionviews">
+   <property name="text">
+    <string>视屏</string>
+   </property>
+  </action>
+  <action name="actionword_2">
+   <property name="text">
+    <string>单词</string>
+   </property>
+  </action>
+  <action name="actionlisten_2">
+   <property name="text">
+    <string>听力</string>
+   </property>
+  </action>
+  <action name="actiontranslate_2">
+   <property name="text">
+    <string>翻译</string>
+   </property>
+  </action>
+  <action name="actionviews_2">
+   <property name="text">
+    <string>视频</string>
+   </property>
+  </action>
+  <action name="actiondir">
+   <property name="text">
+    <string>日记</string>
+   </property>
+  </action>
+  <action name="actionbookmark">
+   <property name="text">
+    <string>笔记</string>
+   </property>
+  </action>
+  <action name="actionschedule">
+   <property name="text">
+    <string>日程</string>
+   </property>
+  </action>
+  <action name="actionguess">
+   <property name="text">
+    <string>单词猜猜</string>
+   </property>
+  </action>
+  <action name="actionsort">
+   <property name="text">
+    <string>单词排队</string>
+   </property>
+  </action>
+  <action name="actionreminder">
+   <property name="text">
+    <string>备忘</string>
+   </property>
+  </action>
+  <action name="actionfill">
+   <property name="text">
+    <string>填空</string>
+   </property>
+  </action>
+  <action name="actionchoose">
+   <property name="text">
+    <string>选择</string>
+   </property>
+  </action>
+  <action name="actionfill_2">
+   <property name="text">
+    <string>填空</string>
+   </property>
+  </action>
+  <action name="actionchoose_2">
+   <property name="text">
+    <string>选择</string>
+   </property>
+  </action>
+  <action name="actionhelp">
+   <property name="text">
+    <string>帮助说明</string>
+   </property>
+  </action>
+  <action name="actionabout">
+   <property name="text">
+    <string>软件说明</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

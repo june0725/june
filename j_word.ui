@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>J_Word</class>
+ <widget class="QDialog" name="J_Word">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>733</width>
+    <height>580</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_10">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_8">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_7">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <item>
+              <widget class="QLabel" name="label_2">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>原文</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTextEdit" name="source">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>200</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_9">
+             <item>
+              <widget class="QLabel" name="label_5">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>美式音标</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTextEdit" name="pa">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>200</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>译文</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTextEdit" name="target">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>200</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <item>
+              <widget class="QLabel" name="label_6">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>英式音标</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTextEdit" name="pe">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>200</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_6">
+         <item>
+          <widget class="QPushButton" name="makesoundA">
+           <property name="maximumSize">
+            <size>
+             <width>60</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>美式</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="makesoundE">
+           <property name="maximumSize">
+            <size>
+             <width>60</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>英式</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="makeup">
+           <property name="maximumSize">
+            <size>
+             <width>60</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>向上</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="makeanswers">
+           <property name="maximumSize">
+            <size>
+             <width>60</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>答案</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="makedown">
+           <property name="maximumSize">
+            <size>
+             <width>60</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>向下</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="makewrong">
+           <property name="maximumSize">
+            <size>
+             <width>60</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>错题</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>例子</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTextEdit" name="example">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>200</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>翻译</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTextEdit" name="translate">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>200</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLineEdit" name="cmdline">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>30</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="cmdrun">
+         <property name="maximumSize">
+          <size>
+           <width>60</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>确定</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>makeanswers</sender>
+   <signal>clicked()</signal>
+   <receiver>J_Word</receiver>
+   <slot>makeanswers()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>675</x>
+     <y>110</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>366</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>makesoundA</sender>
+   <signal>clicked()</signal>
+   <receiver>J_Word</receiver>
+   <slot>makesoundA()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>675</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>366</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cmdrun</sender>
+   <signal>clicked()</signal>
+   <receiver>J_Word</receiver>
+   <slot>cmdrun()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>676</x>
+     <y>520</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>366</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>source</sender>
+   <signal>textChanged()</signal>
+   <receiver>target</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>164</x>
+     <y>104</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>472</x>
+     <y>104</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>source</sender>
+   <signal>textChanged()</signal>
+   <receiver>example</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>164</x>
+     <y>104</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>366</x>
+     <y>268</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>source</sender>
+   <signal>textChanged()</signal>
+   <receiver>translate</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>164</x>
+     <y>104</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>366</x>
+     <y>431</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>makedown</sender>
+   <signal>clicked()</signal>
+   <receiver>J_Word</receiver>
+   <slot>makedown()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>675</x>
+     <y>70</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>366</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>makewrong</sender>
+   <signal>clicked()</signal>
+   <receiver>J_Word</receiver>
+   <slot>makewrong()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>675</x>
+     <y>150</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>366</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>makeup</sender>
+   <signal>clicked()</signal>
+   <receiver>J_Word</receiver>
+   <slot>makeup()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>675</x>
+     <y>142</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>366</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>source</sender>
+   <signal>textChanged()</signal>
+   <receiver>pa</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>170</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>87</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>source</sender>
+   <signal>textChanged()</signal>
+   <receiver>pe</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>170</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>217</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>makesoundE</sender>
+   <signal>clicked()</signal>
+   <receiver>J_Word</receiver>
+   <slot>makesoundE()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>690</x>
+     <y>74</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>366</x>
+     <y>289</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
