@@ -50,11 +50,10 @@ June_Main::June_Main(QWidget *parent)
     mdiArea->showMaximized();
 
        tabedit=new JTab(this);
-      QMenu *m;
-      foreach(m,tabedit->fGetMenuBar())
-      {
-          menuBar()->addMenu(m);
-      }
+
+
+ menuBar()->addMenu(tabedit->fGetTextEditMenu());
+
       QToolBar *t;
       foreach(t,tabedit->fGetToolBar())
       {

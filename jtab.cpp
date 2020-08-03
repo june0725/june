@@ -16,6 +16,8 @@ JTab::JTab(QWidget *parent) :
    connect(textEdit, &QTextEdit::cursorPositionChanged,
            this, &JTab::cursorPositionChanged);
 
+   texteditmenu=new QMenu(tr("TextEdit"),this);
+
    setupFileActions();
    setupEditActions();
    setupTextActions();
@@ -50,7 +52,7 @@ JTab::JTab(QWidget *parent) :
 #endif
 
 
-addmainedit(textEdit);
+insertTab(0,textEdit,"Unamefile.txt");
 }
 
 JTab::~JTab()
@@ -376,6 +378,7 @@ void JTab::setupFileActions()
 
    menulist.append(menu);
     tblist.append(tb);
+    texteditmenu->addMenu(menu);
 }
 
 void JTab::setupEditActions()
@@ -418,6 +421,7 @@ void JTab::setupEditActions()
 #endif
     menulist.append(menu);
      tblist.append(tb);
+     texteditmenu->addMenu(menu);
 }
 
 void JTab::setupTextActions()
@@ -564,35 +568,7 @@ void JTab::setupTextActions()
 
     menulist.append(menu);
      tblist.append(tb);
-}
-
-bool JTab::load(const QString &f)
-{
-    if (!QFile::exists(f))
-        return false;
-    QFile file(f);
-    if (!file.open(QFile::ReadOnly))
-        return false;
-
-    QByteArray data = file.readAll();
-    QTextCodec *codec = Qt::codecForHtml(data);
-    QString str = codec->toUnicode(data);
-    if (Qt::mightBeRichText(str)) {
-        QUrl baseUrl = (f.front() == QLatin1Char(':') ? QUrl(f) : QUrl::fromLocalFile(f)).adjusted(QUrl::RemoveFilename);
-        textEdit->document()->setBaseUrl(baseUrl);
-        textEdit->setHtml(str);
-    } else {
-#if QT_CONFIG(textmarkdownreader)
-        QMimeDatabase db;
-        if (db.mimeTypeForFileNameAndData(f, data).name() == QLatin1String("text/markdown"))
-            textEdit->setMarkdown(QString::fromUtf8(data));
-        else
-#endif
-            textEdit->setPlainText(QString::fromUtf8(data));
-    }
-
-    setCurrentFileName(f);
-    return true;
+     texteditmenu->addMenu(menu);
 }
 
 bool JTab::maybeSave()
@@ -612,26 +588,11 @@ bool JTab::maybeSave()
     return true;
 }
 
-void JTab::setCurrentFileName(const QString &fileName)
-{
-    this->fileName = fileName;
-    textEdit->document()->setModified(false);
-
-    QString shownName;
-    if (fileName.isEmpty())
-        shownName = "untitled.txt";
-    else
-        shownName = QFileInfo(fileName).fileName();
-
-    setWindowTitle(tr("%1[*] - %2").arg(shownName, QCoreApplication::applicationName()));
-    setWindowModified(false);
-}
-
 void JTab::fileNew()
 {
     if (maybeSave()) {
         textEdit->clear();
-        setCurrentFileName(QString());
+       // setCurrentFileName(QString());
     }
 }
 
@@ -652,10 +613,29 @@ void JTab::fileOpen()
     if (fileDialog.exec() != QDialog::Accepted)
         return;
     const QString fn = fileDialog.selectedFiles().first();
-//    if (load(fn))
-//      //  statusBar()->showMessage(tr("Opened \"%1\"").arg(QDir::toNativeSeparators(fn)));
-//    else
-//       // statusBar()->showMessage(tr("Could not open \"%1\"").arg(QDir::toNativeSeparators(fn)));
+    if (!QFile::exists(fn))
+        return ;
+    QFile file(fn);
+    if (!file.open(QFile::ReadOnly))
+        return ;
+
+    QByteArray data = file.readAll();
+    QTextCodec *codec = Qt::codecForHtml(data);
+    QString str = codec->toUnicode(data);
+    if (Qt::mightBeRichText(str)) {
+        QUrl baseUrl = (fn.front() == QLatin1Char(':') ? QUrl(fn) : QUrl::fromLocalFile(fn)).adjusted(QUrl::RemoveFilename);
+        textEdit->document()->setBaseUrl(baseUrl);
+        textEdit->setHtml(str);
+    } else {
+#if QT_CONFIG(textmarkdownreader)
+        QMimeDatabase db;
+        if (db.mimeTypeForFileNameAndData(fn, data).name() == QLatin1String("text/markdown"))
+            textEdit->setMarkdown(QString::fromUtf8(data));
+        else
+#endif
+            textEdit->setPlainText(QString::fromUtf8(data));
+    }
+
 }
 
 bool JTab::fileSave()
@@ -667,13 +647,10 @@ bool JTab::fileSave()
 
     QTextDocumentWriter writer(fileName);
     bool success = writer.write(textEdit->document());
-//    if (success) {
-//        textEdit->document()->setModified(false);
-//        statusBar()->showMessage(tr("Wrote \"%1\"").arg(QDir::toNativeSeparators(fileName)));
-//    } else {
-//        statusBar()->showMessage(tr("Could not write to file \"%1\"")
-//                                 .arg(QDir::toNativeSeparators(fileName)));
-//    }
+    if (success) {
+        textEdit->document()->setModified(false);
+    }
+
     return success;
 }
 
@@ -697,7 +674,7 @@ bool JTab::fileSaveAs()
     if (fileDialog.exec() != QDialog::Accepted)
         return false;
     const QString fn = fileDialog.selectedFiles().first();
-    setCurrentFileName(fn);
+        fileName=fn;
     return fileSave();
 }
 
@@ -733,7 +710,6 @@ void JTab::printPreview(QPrinter *printer)
     Q_UNUSED(printer)
 #endif
 }
-
 
 void JTab::filePrintPdf()
 {

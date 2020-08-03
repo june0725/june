@@ -86,8 +86,9 @@ private:
     QString mainfile;
 
 public:
-    bool load(const QString &f);
+
     QList<QMenu *> fGetMenuBar(){return menulist;}
+    QMenu *fGetTextEditMenu(){return texteditmenu;}
     QList<QToolBar *> fGetToolBar(){return tblist;}
 public slots:
     void fileNew();
@@ -122,7 +123,7 @@ public slots:
     void setupEditActions();
     void setupTextActions();
     bool maybeSave();
-    void setCurrentFileName(const QString &fileName);
+
     void modifyIndentation(int amount);
 
     void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
@@ -158,6 +159,7 @@ private:
     QToolBar *tb;
     QList<QToolBar *>tblist;
     QList<QMenu *>menulist;
+    QMenu *texteditmenu;
     QString fileName;
     QTextEdit *textEdit;
 };
