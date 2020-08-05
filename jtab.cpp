@@ -595,10 +595,7 @@ void JTab::fileNew()
 //       // setCurrentFileName(QString());
 //    }
 
-    QTextCursor cursor =textEdit->textCursor();
-    QTextListFormat listFormat;
-    listFormat.setStyle(QTextListFormat::ListDecimal);
-    cursor.insertList(listFormat);
+
 }
 
 void JTab::fileOpen()
