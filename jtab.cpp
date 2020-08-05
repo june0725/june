@@ -590,10 +590,15 @@ bool JTab::maybeSave()
 
 void JTab::fileNew()
 {
-    if (maybeSave()) {
-        textEdit->clear();
-       // setCurrentFileName(QString());
-    }
+//    if (maybeSave()) {
+//        textEdit->clear();
+//       // setCurrentFileName(QString());
+//    }
+
+    QTextCursor cursor =textEdit->textCursor();
+    QTextListFormat listFormat;
+    listFormat.setStyle(QTextListFormat::ListDecimal);
+    cursor.insertList(listFormat);
 }
 
 void JTab::fileOpen()
@@ -635,6 +640,7 @@ void JTab::fileOpen()
 #endif
             textEdit->setPlainText(QString::fromUtf8(data));
     }
+
 
 }
 
