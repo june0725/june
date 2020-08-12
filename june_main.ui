@@ -10,8 +10,15 @@
     <height>600</height>
    </rect>
   </property>
+  <property name="mouseTracking">
+   <bool>false</bool>
+  </property>
   <property name="windowTitle">
    <string>June_Main</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>images/june_icon.ico</normaloff>images/june_icon.ico</iconset>
   </property>
   <widget class="QWidget" name="centralwidget"/>
   <widget class="QMenuBar" name="menubar">

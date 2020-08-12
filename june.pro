@@ -65,7 +65,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     june.qrc
-
+RC_ICONS = june_icon.ico
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../usr/lib/release/ -lqscintilla2_qt5
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../usr/lib/debug/ -lqscintilla2_qt5
 else:unix: LIBS += -L$$PWD/../../../usr/lib/ -lqscintilla2_qt5

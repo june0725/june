@@ -45,6 +45,7 @@ June_Main::June_Main(QWidget *parent)
     , ui(new Ui::June_Main)
 {
     ui->setupUi(this);
+    setWindowIcon(QIcon(":/images/june.png"));
     mdiArea=new JMdi(this);
     setCentralWidget(mdiArea);
     mdiArea->showMaximized();
@@ -55,9 +56,10 @@ June_Main::June_Main(QWidget *parent)
  menuBar()->addMenu(tabedit->fGetTextEditMenu());
 
       QToolBar *t;
-      foreach(t,tabedit->fGetToolBar())
+      foreach(t,tabedit->fGetToolbarlist())
       {
           addToolBar(t);
+          addToolBarBreak(Qt::TopToolBarArea);
       }
        mdiArea->AddMainEdit(tabedit);
 }

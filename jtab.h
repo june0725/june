@@ -24,6 +24,7 @@
 #include <QCloseEvent>
 #include <QMimeData>
 #include <QMimeDatabase>
+#include <QImageReader>
 #if defined(QT_PRINTSUPPORT_LIB)
 #include <QtPrintSupport/qtprintsupportglobal.h>
 #if QT_CONFIG(printer)
@@ -48,7 +49,7 @@ class QMenuBar;
 class QPrinter;
 QT_END_NAMESPACE
 
-const QString rsrcPath = ":/images/win";
+const QString rsrcPath = ":/images/icon";
 
 
 namespace Ui {
@@ -67,7 +68,6 @@ public:
     bool addtabeditfile(QString f);
     void addmainedit(QTextEdit *w);
     bool removeeditfile(QWidget *w);
-    bool fOpenfile(QTextEdit *w,QString f);
     bool fMaybesave(QWidget *w,QString f);
     bool fSavefile(QWidget *w,QString f);
 public slots:
@@ -86,19 +86,19 @@ private:
     QString mainfile;
 
 public:
-
-    QList<QMenu *> fGetMenuBar(){return menulist;}
     QMenu *fGetTextEditMenu(){return texteditmenu;}
-    QList<QToolBar *> fGetToolBar(){return tblist;}
+    QList<QToolBar *> fGetToolbarlist(){return tblist;}
+    void initActions();
+
 public slots:
     void fileNew();
     void fileOpen();
+    void fOpenfile();
     bool fileSave();
     bool fileSaveAs();
     void filePrint();
     void filePrintPreview();
     void filePrintPdf();
-
     void textBold();
     void textUnderline();
     void textItalic();
@@ -110,28 +110,38 @@ public slots:
     void setChecked(bool checked);
     void indent();
     void unindent();
-
     void currentCharFormatChanged(const QTextCharFormat &format);
     void cursorPositionChanged();
-
     void clipboardDataChanged();
-    void about();
+    void CloseAll();
     void printPreview(QPrinter *);
 
+    ///////////////////////////
+    void insertTable();     //插入表格
+     void insertList();      //插入列表
+       void insertImage();
+       void insertframe();
+       void textFind();        //文本查找
+       void findNext();
     public:
-    void setupFileActions();
-    void setupEditActions();
-    void setupTextActions();
     bool maybeSave();
-
     void modifyIndentation(int amount);
-
     void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
     void fontChanged(const QFont &f);
     void colorChanged(const QColor &c);
     void alignmentChanged(Qt::Alignment a);
 
+    ///////////////////////////////////////////
+    QAction *activenew;
+    QAction *activeopen;
     QAction *actionSave;
+    QAction *activesaveas;
+    QAction *activeprint;
+    QAction *activeprintview;
+    QAction *activepdf;
+    QAction *activequit;
+////////////////////////////////////////
+    QActionGroup *alignGroup;
     QAction *actionTextBold;
     QAction *actionTextUnderline;
     QAction *actionTextItalic;
@@ -143,6 +153,7 @@ public slots:
     QAction *actionIndentLess;
     QAction *actionIndentMore;
     QAction *actionToggleCheckState;
+/////////////////////////////////////
     QAction *actionUndo;
     QAction *actionRedo;
 #ifndef QT_NO_CLIPBOARD
@@ -150,18 +161,26 @@ public slots:
     QAction *actionCopy;
     QAction *actionPaste;
 #endif
-
+    ///////////////////////
+    QAction *act_insertFrame;
+    QAction *act_insertTable;
+    QAction *act_insertList;
+    QAction *act_insertImage;
+    QAction *act_find;
+    QAction *act_CHINA;
 private:
     QComboBox *comboStyle;
     QFontComboBox *comboFont;
     QComboBox *comboSize;
 
-    QToolBar *tb;
     QList<QToolBar *>tblist;
-    QList<QMenu *>menulist;
     QMenu *texteditmenu;
     QString fileName;
     QTextEdit *textEdit;
+
+      public:
+
+
 };
 
 #endif // JTAB_H
