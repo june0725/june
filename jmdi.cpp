@@ -9,6 +9,7 @@ JMdi::JMdi(QWidget *parent) :
     ui->setupUi(this);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    setBackground(QBrush(QImage(":/images/june_icon.png")));
 }
 
 JMdi::~JMdi()
@@ -23,43 +24,22 @@ bool JMdi::AddMainEdit(JTab *tabedit)
 }
 bool JMdi::AddmdiChild(QWidget *w)
 {
-    QMdiSubWindow *subwin1 = addSubWindow(w);
-    subwin1->setAttribute(Qt::WA_DeleteOnClose);
-    subwin1->show();
-
+    QMdiSubWindow *subWindow1 =addSubWindow(w);
+    subWindow1->setAttribute(Qt::WA_DeleteOnClose);    
+    subWindow1->show();
+    tileSubWindows();
     return true;
 }
 
 bool JMdi::AddeditChild(const QString f)
 {
-    if (!QFile::exists(f))
-        return false;
-    QFile file(f);
-    if (!file.open(QFile::ReadOnly))
-        return false;
     textEdit=new QTextEdit(this);
-    QByteArray data = file.readAll();
-    QTextCodec *codec = Qt::codecForHtml(data);
-    QString str = codec->toUnicode(data);
-    if (Qt::mightBeRichText(str)) {
-        QUrl baseUrl = (f.front() == QLatin1Char(':') ? QUrl(f) : QUrl::fromLocalFile(f)).adjusted(QUrl::RemoveFilename);
-        textEdit->document()->setBaseUrl(baseUrl);
-        textEdit->setHtml(str);
-    } else {
-#if QT_CONFIG(textmarkdownreader)
-        QMimeDatabase db;
-        if (db.mimeTypeForFileNameAndData(f, data).name() == QLatin1String("text/markdown"))
-            textEdit->setMarkdown(QString::fromUtf8(data));
-        else
-#endif
-            textEdit->setPlainText(QString::fromUtf8(data));
-    }
+    textEdit->setText(f);
     textEdit->setReadOnly(true);
-    QMdiSubWindow *subwin1 = addSubWindow(textEdit);
-    subwin1->setAttribute(Qt::WA_DeleteOnClose);
-    subwin1->setWindowTitle(QFileInfo(f).fileName());
-    subwin1->show();
-
+    QMdiSubWindow *subWindow1 =addSubWindow(textEdit);
+    subWindow1->setAttribute(Qt::WA_DeleteOnClose);
+    subWindow1->show();
+    tileSubWindows();
     return true;
 }
 

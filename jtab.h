@@ -64,31 +64,33 @@ class JTab : public QTabWidget
 public:
     explicit JTab(QWidget *parent = nullptr);
     ~JTab();
+    QMenu *fGetTextEditMenu(){return texteditmenu;}
+    QList<QToolBar *> fGetToolbarlist(){return tblist;}
+    void initActions();
+
+    void addtabwidget(QWidget *w);
     void addtabwidget(QWidget *w,QString f);
     bool addtabeditfile(QString f);
     void addmainedit(QTextEdit *w);
-    bool removeeditfile(QWidget *w);
+    void removeeditfile(QWidget *w);
+    void fileopens(QTextEdit *w, QString fn);
     bool fMaybesave(QWidget *w,QString f);
-    bool fSavefile(QWidget *w,QString f);
+    void fSavefile(QWidget *w,QString f);
+        QWidget * fGetWidget(QString f);
+    int fCheckname(QString f);
 public slots:
     void CloseChild(int i);    
     void DbleClick(int i);
     void changeindex(int i);
-    QWidget * fGetWidget(QString f);
-    int fCheckname(QString f);
 signals:
     void addmdi(QString fn);
     void closedfile(QString v,QString f);
+
 private:
     Ui::JTab *ui;    
     QMap<QString,QWidget *>Tablist;
     QTextEdit *mainedit;
     QString mainfile;
-
-public:
-    QMenu *fGetTextEditMenu(){return texteditmenu;}
-    QList<QToolBar *> fGetToolbarlist(){return tblist;}
-    void initActions();
 
 public slots:
     void fileNew();
@@ -172,13 +174,11 @@ private:
     QComboBox *comboStyle;
     QFontComboBox *comboFont;
     QComboBox *comboSize;
-
     QList<QToolBar *>tblist;
-    QMenu *texteditmenu;
-    QString fileName;
+    QMenu *texteditmenu;    
     QTextEdit *textEdit;
+    QString fileName;
 
-      public:
 
 
 };

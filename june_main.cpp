@@ -49,9 +49,8 @@ June_Main::June_Main(QWidget *parent)
     mdiArea=new JMdi(this);
     setCentralWidget(mdiArea);
     mdiArea->showMaximized();
-
-       tabedit=new JTab(this);
-
+    tabedit=new JTab(this);
+ connect(tabedit,&JTab::addmdi,mdiArea,&JMdi::AddeditChild);
 
  menuBar()->addMenu(tabedit->fGetTextEditMenu());
 
@@ -133,7 +132,7 @@ June_Main::~June_Main()
 //{
 //    if(!mdiArea)
 //        createMdi();
- //   tabedit=new JTab(this);
+//    tabedit=new JTab(this);
 //    setMenuBar(tabedit->fGetMenuBar());
 //    mdiArea->AddMainEdit(tabedit);
 //    tabedit->addmainedit(textEdit);

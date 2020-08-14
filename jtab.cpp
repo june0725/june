@@ -17,23 +17,21 @@ JTab::JTab(QWidget *parent) :
            this, &JTab::cursorPositionChanged);
 
 texteditmenu=new QMenu(tr("Text and Edit"),this);
-
    initActions();
 
-
-
-
-insertTab(0,textEdit,"Unamefile.txt");
 }
 
 JTab::~JTab()
 {
     delete ui;
 }
+
 void JTab::changeindex(int i)
 {
+    if(i==0)
+        return;
      QWidget * w=widget(i);
-    QTextEdit *textEdit;
+    QTextEdit *t;
     if(QString(w->metaObject()->className())=="QTextEdit")
     {
        clear();
@@ -42,8 +40,8 @@ void JTab::changeindex(int i)
        {
            if(b.key()==mainfile)
            {
-               textEdit=dynamic_cast<QTextEdit *>(b.value());
-               textEdit->setHtml(mainedit->toHtml());
+               t=dynamic_cast<QTextEdit *>(b.value());
+               t->setHtml(mainedit->toHtml());
                break;
            }
            ++b;
@@ -55,8 +53,8 @@ void JTab::changeindex(int i)
            {
 
                mainfile=a.key();
-               textEdit=dynamic_cast<QTextEdit *>(w);
-               mainedit->setHtml(textEdit->toHtml());
+               t=dynamic_cast<QTextEdit *>(w);
+               mainedit->setHtml(t->toHtml());
                addTab(mainedit,QFileInfo(mainfile).fileName());
 
            }
@@ -106,7 +104,7 @@ bool JTab::addtabeditfile(QString f)
                 QTextEdit *a=new QTextEdit(this);
                 Tablist[f]=a;
                 a->setFrameShape(QFrame::NoFrame);
-                //fOpenfile(a,f);
+                fileopens(a,f);
             }
 
            QMap<QString, QWidget *>::const_iterator i = Tablist.constBegin();
@@ -114,7 +112,7 @@ bool JTab::addtabeditfile(QString f)
                if(i.key()==f)
                {
                    mainfile=f;
-                   //fOpenfile(mainedit,f);
+                   fileopens(mainedit,f);
                    addTab(mainedit,QFileInfo(i.key()).fileName());
                }
                else{
@@ -150,15 +148,18 @@ bool JTab::fMaybesave(QWidget *w,QString f)
     return true;
 }
 
-bool JTab::fSavefile(QWidget *w,QString f)
+void JTab::fSavefile(QWidget *w,QString f)
 {
+    fileName=f;
+
     QString value=dynamic_cast<QTextEdit *>(w)->toHtml();
 
     emit closedfile(value,f);
 
 }
-bool JTab::removeeditfile(QWidget *w)
+void JTab::removeeditfile(QWidget *w)
 {
+    qDebug()<<"before"<<Tablist.count();
       if(w==mainedit)
       {
          removeTab(indexOf(mainedit));
@@ -180,10 +181,14 @@ bool JTab::removeeditfile(QWidget *w)
       }
       if(Tablist.count()>0)
         changeindex(0);
+
+       qDebug()<<"after"<<Tablist.count();
 }
 
 void JTab::CloseChild(int i)
 {
+    if(Tablist.count()>0)
+        changeindex(i);
     QWidget * w=widget(i);
    if(QString(w->metaObject()->className())=="QTextEdit")
    {
@@ -227,6 +232,8 @@ void JTab::CloseChild(int i)
        if(Tablist.count()>0)
          changeindex(0);
    }
+
+
 }
 void JTab::DbleClick(int i)
 {
@@ -238,7 +245,7 @@ void JTab::DbleClick(int i)
         while (a != Tablist.constEnd()) {
             if(a.value()==w)
             {
-                f=a.key();
+                f=dynamic_cast<QTextEdit *>(w)->toHtml();
                 break;
             }
 
@@ -246,7 +253,7 @@ void JTab::DbleClick(int i)
         }
     }
     else
-        f=mainfile;
+        f=mainedit->toHtml();
 
 
     emit addmdi(f);
@@ -259,6 +266,31 @@ QWidget * JTab::fGetWidget(QString f)
   return nullptr;
 }
 
+void JTab::fileopens(QTextEdit *w, QString fn)
+{
+    QFile file(fn);
+    if (!file.open(QFile::ReadOnly))
+        return ;
+
+    QByteArray data = file.readAll();
+    QTextCodec *codec = Qt::codecForHtml(data);
+    QString str = codec->toUnicode(data);
+    if (Qt::mightBeRichText(str)) {
+        QUrl baseUrl = (fn.front() == QLatin1Char(':') ? QUrl(fn) : QUrl::fromLocalFile(fn)).adjusted(QUrl::RemoveFilename);
+        w->document()->setBaseUrl(baseUrl);
+        w->setHtml(str);
+    } else {
+#if QT_CONFIG(textmarkdownreader)
+        QMimeDatabase db;
+        if (db.mimeTypeForFileNameAndData(fn, data).name() == QLatin1String("text/markdown"))
+            w->setMarkdown(QString::fromUtf8(data));
+        else
+#endif
+            w->setPlainText(QString::fromUtf8(data));
+    }
+
+
+}
 int JTab::fCheckname(QString f)//1存在，0不存在
 {
     if(Tablist.contains(f))
@@ -784,33 +816,13 @@ void JTab::fileOpen()
     const QString fn = fileDialog.selectedFiles().first();
     if (!QFile::exists(fn))
         return ;
-    QFile file(fn);
-    if (!file.open(QFile::ReadOnly))
-        return ;
-
-    QByteArray data = file.readAll();
-    QTextCodec *codec = Qt::codecForHtml(data);
-    QString str = codec->toUnicode(data);
-    if (Qt::mightBeRichText(str)) {
-        QUrl baseUrl = (fn.front() == QLatin1Char(':') ? QUrl(fn) : QUrl::fromLocalFile(fn)).adjusted(QUrl::RemoveFilename);
-        textEdit->document()->setBaseUrl(baseUrl);
-        textEdit->setHtml(str);
-    } else {
-#if QT_CONFIG(textmarkdownreader)
-        QMimeDatabase db;
-        if (db.mimeTypeForFileNameAndData(fn, data).name() == QLatin1String("text/markdown"))
-            textEdit->setMarkdown(QString::fromUtf8(data));
-        else
-#endif
-            textEdit->setPlainText(QString::fromUtf8(data));
-    }
-
+    addtabeditfile(fn);
 
 }
 
 bool JTab::fileSave()
 {
-    if (fileName.isEmpty())
+    if (fileName.isEmpty()||fileName=="Unamefile.txt")
         return fileSaveAs();
     if (fileName.startsWith(QStringLiteral(":/")))
         return fileSaveAs();
