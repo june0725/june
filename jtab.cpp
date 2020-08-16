@@ -28,192 +28,102 @@ JTab::~JTab()
 
 void JTab::changeindex(int i)
 {
-    if(i==0)
-        return;
-     QWidget * w=widget(i);
-    QTextEdit *t;
-    if(QString(w->metaObject()->className())=="QTextEdit")
-    {
-       clear();
-       QMap<QString, QWidget *>::const_iterator b = Tablist.constBegin();
-       while (b != Tablist.constEnd())
-       {
-           if(b.key()==mainfile)
-           {
-               t=dynamic_cast<QTextEdit *>(b.value());
-               t->setHtml(mainedit->toHtml());
-               break;
-           }
-           ++b;
-       }
-       QMap<QString, QWidget *>::const_iterator a = Tablist.constBegin();
-       while (a != Tablist.constEnd())
-       {
-           if(a.value()==w)
-           {
-
-               mainfile=a.key();
-               t=dynamic_cast<QTextEdit *>(w);
-               mainedit->setHtml(t->toHtml());
-               addTab(mainedit,QFileInfo(mainfile).fileName());
-
-           }
-           else
-           {
-               addTab(a.value(),QFileInfo(a.key()).fileName());
-           }
-           ++a;
-       }
-    }
-    else
-    {
-       this->setCurrentWidget(w);
-    }
-
-}
-void JTab::addmainedit(QTextEdit *w)
-{
-    if(w)
-       mainedit=w;
-    mainfile="";
-    insertTab(0,mainedit,"Unamefile.txt");
-
-}
-
-void JTab::addtabwidget(QWidget *w,QString f)
-{
-    if(!(f.isEmpty())||w!=nullptr)
-    {   if(fCheckname(f)==1)
+         QWidget * w=widget(i);
+        QMap<QString, QWidget *>::const_iterator b = Tablist.constBegin();
+        while (b != Tablist.constEnd())
         {
-            this->setCurrentWidget(fGetWidget(f));
-            return;
-        }
-
-        Tablist[f]=w;
-        addTab(w,QFileInfo(f).fileName());
-        return;
-    }
-}
-bool JTab::addtabeditfile(QString f)
-{
-        if(QFile(f).exists())
-        {
-            clear();
-            if(fCheckname(f)==0)
+            if(b.value()==w)
             {
-                QTextEdit *a=new QTextEdit(this);
-                Tablist[f]=a;
-                a->setFrameShape(QFrame::NoFrame);
-                fileopens(a,f);
+                if(QString(w->metaObject()->className())=="QTextEdit")
+                {
+                    if(Tablist.count()>1)
+                    {
+                        QString a=textEdit->toHtml();
+                        dynamic_cast<QTextEdit *>(Tablist.value(mainfile))->setHtml(a);
+                    }
+                 }
+
+                  mainfile=b.key();
+                    tabfresh();
+                    return;
+
+                break;
             }
-
-           QMap<QString, QWidget *>::const_iterator i = Tablist.constBegin();
-           while (i != Tablist.constEnd()) {
-               if(i.key()==f)
-               {
-                   mainfile=f;
-                   fileopens(mainedit,f);
-                   addTab(mainedit,QFileInfo(i.key()).fileName());
-               }
-               else{
-                   addTab(i.value(),QFileInfo(i.key()).fileName());
-               }
-               ++i;
-           }
-
-           setCurrentWidget(mainedit);
-           return true;
-        }
-        else
-        {
-            mainfile="";
-            insertTab(0,mainedit,"Unamefile.txt");
+            ++b;
         }
 
 
-        return true;
 }
-bool JTab::fMaybesave(QWidget *w,QString f)
+void JTab::tabfresh()
 {
-    const QMessageBox::StandardButton ret =
-        QMessageBox::warning(this, QCoreApplication::applicationName(),
-                             tr("The document has been modified.\n"
-                                "Do you want to save your changes?"),
-                             QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-    if (ret == QMessageBox::Save)
-         fSavefile(w,f);
-    else if (ret == QMessageBox::Cancel)
-        return false;
-
-    return true;
-}
-
-void JTab::fSavefile(QWidget *w,QString f)
-{
-    fileName=f;
-
-    QString value=dynamic_cast<QTextEdit *>(w)->toHtml();
-
-    emit closedfile(value,f);
-
-}
-void JTab::removeeditfile(QWidget *w)
-{
-    qDebug()<<"before"<<Tablist.count();
-      if(w==mainedit)
-      {
-         removeTab(indexOf(mainedit));
-
-      }else
-      {
-          removeTab(indexOf(w));
-      }
-      QMap<QString, QWidget *>::const_iterator a = Tablist.constBegin();
-      while (a != Tablist.constEnd())
-      {
-          if(a.key()==mainfile)
-          {
-              a.value()->deleteLater();
-              Tablist.remove(a.key());
-              break;
-          }
-          ++a;
-      }
-      if(Tablist.count()>0)
-        changeindex(0);
-
-       qDebug()<<"after"<<Tablist.count();
-}
-
-void JTab::CloseChild(int i)
-{
-    if(Tablist.count()>0)
-        changeindex(i);
-    QWidget * w=widget(i);
-   if(QString(w->metaObject()->className())=="QTextEdit")
-   {
-            QWidget * w=widget(i);
-            if(w==mainedit)
+    clear();
+    QMap<QString, QWidget *>::const_iterator i = Tablist.constBegin();
+    while (i != Tablist.constEnd())
+    {
+            if(i.key()==mainfile)
             {
-                if(fMaybesave(w,mainfile))
-                    removeeditfile(w);
+                if(QString(i.value()->metaObject()->className())=="QTextEdit")
+                {
+                QString values=dynamic_cast<QTextEdit *>(i.value())->toHtml();
+                textEdit->setHtml(values);
+                addTab(textEdit,QFileInfo(i.key()).fileName());
+                setCurrentWidget(textEdit);
+                }
+                else
+                {
+                    addTab(i.value(),QFileInfo(i.key()).fileName());
+                    setCurrentWidget(i.value());
+                }
             }
             else
             {
-                QMap<QString, QWidget *>::const_iterator a = Tablist.constBegin();
-                while (a != Tablist.constEnd())
-                {
-                    if(a.value()==w)
-                    {
-                        if(fMaybesave(w,a.key()))
-                            removeeditfile(w);
-                        break;
-                    }
-                    ++a;
-                }
-
-
+                 addTab(i.value(),QFileInfo(i.key()).fileName());
             }
+        ++i;
+    }
+
+
+}
+void JTab::addtabwidget(QWidget *w,QString f)
+{
+    Tablist.insert(f,w);
+    mainfile=f;
+    tabfresh();
+}
+bool JTab::addtabeditfile(QString f)
+{
+        if(!Tablist.contains(f))
+        {
+            QTextEdit *a=new QTextEdit(this);
+            a->setFrameShape(QFrame::NoFrame);
+            Tablist.insert(f,a);
+            fileopens(a,f);
+        }
+
+
+         if(Tablist.contains(mainfile))
+            {
+                QString values=textEdit->toHtml();
+                dynamic_cast<QTextEdit *>(Tablist.value(mainfile))->setHtml(values);
+            }
+
+            mainfile=f;
+            tabfresh();
+        return true;
+}
+void JTab::CloseChild(int i)
+{
+    if(Tablist.count()>1)
+        changeindex(i);
+    else
+        changeindex(0);
+
+    QWidget * w=widget(i);
+   if(QString(w->metaObject()->className())=="QTextEdit")
+   {
+            maybeSave();
+            removeTab(indexOf(textEdit));
+            Tablist.remove(mainfile);
    }
    else
    {
@@ -229,43 +139,19 @@ void JTab::CloseChild(int i)
            }
            ++a;
        }
-       if(Tablist.count()>0)
-         changeindex(0);
-   }
 
+
+   }
 
 }
 void JTab::DbleClick(int i)
 {
-    QWidget * w=widget(i);
-    QString f;
-    if(w!=mainedit)
-    {
-    QMap<QString, QWidget *>::const_iterator a = Tablist.constBegin();
-        while (a != Tablist.constEnd()) {
-            if(a.value()==w)
-            {
-                f=dynamic_cast<QTextEdit *>(w)->toHtml();
-                break;
-            }
-
-            ++a;
-        }
-    }
-    else
-        f=mainedit->toHtml();
-
-
+    changeindex(i);
+    if (mainfile.isEmpty()||mainfile=="Unamefile.txt")
+        maybeSave();
+    QString f=textEdit->toHtml();
     emit addmdi(f);
 }
-
-QWidget * JTab::fGetWidget(QString f)
-{
-   if(Tablist.contains(f))
-       return Tablist[f];
-  return nullptr;
-}
-
 void JTab::fileopens(QTextEdit *w, QString fn)
 {
     QFile file(fn);
@@ -291,13 +177,6 @@ void JTab::fileopens(QTextEdit *w, QString fn)
 
 
 }
-int JTab::fCheckname(QString f)//1存在，0不存在
-{
-    if(Tablist.contains(f))
-        return 1;
-  return 0;
-}
-
 void JTab::initActions()
 {
 //    const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/images/open.png"));
@@ -670,7 +549,6 @@ connect(textEdit, &QTextEdit::copyAvailable, actionCopy, &QAction::setEnabled);
 connect(QApplication::clipboard(), &QClipboard::dataChanged, this, &JTab::clipboardDataChanged);
 #endif
 }
-
 void JTab::insertTable()
 {
     QTextCursor cursor =textEdit->textCursor();
@@ -679,7 +557,6 @@ void JTab::insertTable()
     tableFormat.setCellSpacing(2);
     cursor.insertTable(2,2,tableFormat);
 }
-
 void JTab::insertList()
 {
 
@@ -715,7 +592,6 @@ void JTab::insertframe()
     QTextCursor cursor = textEdit->textCursor();    //获取光标
     cursor.insertFrame(frameFormat2);
 }
-
 void JTab::textFind()
 {
 //    QDialog *dlg = new QDialog(this);       //创建查找对话框
@@ -743,29 +619,31 @@ void JTab::findNext()
 }
 bool JTab::maybeSave()
 {
-    if (!textEdit->document()->isModified())
-        return true;
-
+    if(Tablist.count()>0)
+    {
     const QMessageBox::StandardButton ret =
         QMessageBox::warning(this, QCoreApplication::applicationName(),
                              tr("The document has been modified.\n"
                                 "Do you want to save your changes?"),
                              QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
     if (ret == QMessageBox::Save)
-        return fileSave();
+        fileSave();
     else if (ret == QMessageBox::Cancel)
         return false;
+    }
+    else
+    {
+        if(!textEdit->toPlainText().isEmpty())
+            fileSave();
+    }
+
+
     return true;
 }
-
 void JTab::fileNew()
 {
-//    if (maybeSave()) {
-//        textEdit->clear();
-//       // setCurrentFileName(QString());
-//    }
-
-
+     maybeSave();     
+    addtabeditfile("Unamefile.txt");
 }
 void JTab::fOpenfile()
 {
@@ -812,54 +690,111 @@ void JTab::fileOpen()
     fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
     fileDialog.setFileMode(QFileDialog::ExistingFile);
     if (fileDialog.exec() != QDialog::Accepted)
+    {
+        fileNew();
         return;
+    }
     const QString fn = fileDialog.selectedFiles().first();
-    if (!QFile::exists(fn))
-        return ;
-    addtabeditfile(fn);
+    if (QFile::exists(fn))
+    {
+        if(fn.endsWith(".j",Qt::CaseInsensitive))
+        {
 
-}
-
-bool JTab::fileSave()
-{
-    if (fileName.isEmpty()||fileName=="Unamefile.txt")
-        return fileSaveAs();
-    if (fileName.startsWith(QStringLiteral(":/")))
-        return fileSaveAs();
-
-    QTextDocumentWriter writer(fileName);
-    bool success = writer.write(textEdit->document());
-    if (success) {
-        textEdit->document()->setModified(false);
+                return;
+        }
+        else
+            addtabeditfile(fn);
+    }
+    else
+    {
+        //fileNew() ;
     }
 
-    return success;
-}
 
-bool JTab::fileSaveAs()
+}
+void JTab::fileSave()
+{    
+    if(Tablist.count()==0)
+    {
+        fileSaveAs();
+        if(!fileName.isEmpty())
+        {
+            QFile data(fileName);
+            if (data.open(QFile::WriteOnly))
+            {
+                QTextStream out(&data);
+                out <<textEdit->toHtml();
+                out.flush();
+            }
+            mainfile=fileName;
+            addtabeditfile(mainfile);
+            tabfresh();
+        }
+        else
+            textEdit->clear();
+
+        return;
+    }
+
+    if (mainfile.endsWith(".j"))
+    {
+        return;
+    }
+
+    if (mainfile.isEmpty()||mainfile=="Unamefile.txt")
+    {
+        fileSaveAs();
+        if(!fileName.isEmpty())
+        {
+            QFile data(fileName);
+            if (data.open(QFile::WriteOnly))
+            {
+                QTextStream out(&data);
+                out <<textEdit->toHtml();
+                out.flush();
+                removeTab(indexOf(textEdit));
+                Tablist.remove(mainfile);
+            }
+            mainfile=fileName;
+        }
+        else
+        {
+            if(Tablist.count()>1)
+                mainfile=Tablist.firstKey();
+            else
+                removeTab(indexOf(textEdit));
+
+            return;
+        }
+    }
+    else
+    {
+        QFile data(mainfile);
+        if (data.open(QFile::WriteOnly))
+        {
+            QTextStream out(&data);
+            out <<textEdit->toHtml();
+            out.flush();
+            removeTab(indexOf(textEdit));
+            Tablist.remove(mainfile);
+
+        }
+    }
+
+    addtabeditfile(mainfile);
+        tabfresh();
+
+}
+void JTab::fileSaveAs()
 {
     QFileDialog fileDialog(this, tr("Save as..."));
     fileDialog.setAcceptMode(QFileDialog::AcceptSave);
-    QStringList mimeTypes;
-    mimeTypes << "text/plain"
-#if QT_CONFIG(textodfwriter)
-              << "application/vnd.oasis.opendocument.text"
-#endif
-#if QT_CONFIG(textmarkdownwriter)
-              << "text/markdown"
-#endif
-              << "text/html";
-    fileDialog.setMimeTypeFilters(mimeTypes);
-#if QT_CONFIG(textodfwriter)
-    fileDialog.setDefaultSuffix("odt");
-#endif
     if (fileDialog.exec() != QDialog::Accepted)
-        return false;
+        return;
     const QString fn = fileDialog.selectedFiles().first();
         fileName=fn;
-    return fileSave();
+    return;
 }
-
 void JTab::filePrint()
 {
 #if defined(QT_PRINTSUPPORT_LIB) && QT_CONFIG(printdialog)
@@ -873,7 +808,6 @@ void JTab::filePrint()
     delete dlg;
 #endif
 }
-
 void JTab::filePrintPreview()
 {
 #if defined(QT_PRINTSUPPORT_LIB) && QT_CONFIG(printpreviewdialog)
@@ -883,7 +817,6 @@ void JTab::filePrintPreview()
     preview.exec();
 #endif
 }
-
 void JTab::printPreview(QPrinter *printer)
 {
 #if defined(QT_PRINTSUPPORT_LIB) && QT_CONFIG(printer)
@@ -892,7 +825,6 @@ void JTab::printPreview(QPrinter *printer)
     Q_UNUSED(printer)
 #endif
 }
-
 void JTab::filePrintPdf()
 {
 #if defined(QT_PRINTSUPPORT_LIB) && QT_CONFIG(printer)
@@ -908,40 +840,33 @@ void JTab::filePrintPdf()
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setOutputFileName(fileName);
     textEdit->document()->print(&printer);
-  //  statusBar()->showMessage(tr("Exported \"%1\"")
-  //                           .arg(QDir::toNativeSeparators(fileName)));
-//! [0]
+
 #endif
 }
-
 void JTab::textBold()
 {
     QTextCharFormat fmt;
     fmt.setFontWeight(actionTextBold->isChecked() ? QFont::Bold : QFont::Normal);
     mergeFormatOnWordOrSelection(fmt);
 }
-
 void JTab::textUnderline()
 {
     QTextCharFormat fmt;
     fmt.setFontUnderline(actionTextUnderline->isChecked());
     mergeFormatOnWordOrSelection(fmt);
 }
-
 void JTab::textItalic()
 {
     QTextCharFormat fmt;
     fmt.setFontItalic(actionTextItalic->isChecked());
     mergeFormatOnWordOrSelection(fmt);
 }
-
 void JTab::textFamily(const QString &f)
 {
     QTextCharFormat fmt;
     fmt.setFontFamily(f);
     mergeFormatOnWordOrSelection(fmt);
 }
-
 void JTab::textSize(const QString &p)
 {
     qreal pointSize = p.toFloat();
@@ -951,7 +876,6 @@ void JTab::textSize(const QString &p)
         mergeFormatOnWordOrSelection(fmt);
     }
 }
-
 void JTab::textStyle(int styleIndex)
 {
     QTextCursor cursor = textEdit->textCursor();
@@ -1035,7 +959,6 @@ void JTab::textStyle(int styleIndex)
 
     cursor.endEditBlock();
 }
-
 void JTab::textColor()
 {
     QColor col = QColorDialog::getColor(textEdit->textColor(), this);
@@ -1046,7 +969,6 @@ void JTab::textColor()
     mergeFormatOnWordOrSelection(fmt);
     colorChanged(col);
 }
-
 void JTab::textAlign(QAction *a)
 {
     if (a == actionAlignLeft)
@@ -1058,22 +980,18 @@ void JTab::textAlign(QAction *a)
     else if (a == actionAlignJustify)
         textEdit->setAlignment(Qt::AlignJustify);
 }
-
 void JTab::setChecked(bool checked)
 {
     textStyle(checked ? 5 : 4);
 }
-
 void JTab::indent()
 {
     modifyIndentation(1);
 }
-
 void JTab::unindent()
 {
     modifyIndentation(-1);
 }
-
 void JTab::modifyIndentation(int amount)
 {
     QTextCursor cursor = textEdit->textCursor();
@@ -1097,13 +1015,11 @@ void JTab::modifyIndentation(int amount)
     }
     cursor.endEditBlock();
 }
-
 void JTab::currentCharFormatChanged(const QTextCharFormat &format)
 {
     fontChanged(format.font());
     colorChanged(format.foreground().color());
 }
-
 void JTab::cursorPositionChanged()
 {
     alignmentChanged(textEdit->alignment());
@@ -1156,7 +1072,6 @@ void JTab::cursorPositionChanged()
         comboStyle->setCurrentIndex(headingLevel ? headingLevel + 10 : 0);
     }
 }
-
 void JTab::clipboardDataChanged()
 {
 #ifndef QT_NO_CLIPBOARD
@@ -1164,12 +1079,21 @@ void JTab::clipboardDataChanged()
         actionPaste->setEnabled(md->hasText());
 #endif
 }
-
 void JTab::CloseAll()
 {
+    if(Tablist.count()==0)
+    {
+        maybeSave();
+        return;
+    }
+
+
+    while (Tablist.count()>0)
+        {
+            CloseChild(0);
+        }
 
 }
-
 void JTab::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
 {
     QTextCursor cursor = textEdit->textCursor();
@@ -1178,7 +1102,6 @@ void JTab::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
     cursor.mergeCharFormat(format);
     textEdit->mergeCurrentCharFormat(format);
 }
-
 void JTab::fontChanged(const QFont &f)
 {
     comboFont->setCurrentIndex(comboFont->findText(QFontInfo(f).family()));
@@ -1187,14 +1110,12 @@ void JTab::fontChanged(const QFont &f)
     actionTextItalic->setChecked(f.italic());
     actionTextUnderline->setChecked(f.underline());
 }
-
 void JTab::colorChanged(const QColor &c)
 {
     QPixmap pix(16, 16);
     pix.fill(c);
     actionTextColor->setIcon(pix);
 }
-
 void JTab::alignmentChanged(Qt::Alignment a)
 {
     if (a & Qt::AlignLeft)

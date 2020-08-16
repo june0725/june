@@ -67,17 +67,10 @@ public:
     QMenu *fGetTextEditMenu(){return texteditmenu;}
     QList<QToolBar *> fGetToolbarlist(){return tblist;}
     void initActions();
-
-    void addtabwidget(QWidget *w);
+    void tabfresh();    
     void addtabwidget(QWidget *w,QString f);
     bool addtabeditfile(QString f);
-    void addmainedit(QTextEdit *w);
-    void removeeditfile(QWidget *w);
-    void fileopens(QTextEdit *w, QString fn);
-    bool fMaybesave(QWidget *w,QString f);
-    void fSavefile(QWidget *w,QString f);
-        QWidget * fGetWidget(QString f);
-    int fCheckname(QString f);
+    void fileopens(QTextEdit *w, QString fn);   
 public slots:
     void CloseChild(int i);    
     void DbleClick(int i);
@@ -85,19 +78,25 @@ public slots:
 signals:
     void addmdi(QString fn);
     void closedfile(QString v,QString f);
-
 private:
     Ui::JTab *ui;    
     QMap<QString,QWidget *>Tablist;
     QTextEdit *mainedit;
     QString mainfile;
-
+private:
+    QComboBox *comboStyle;
+    QFontComboBox *comboFont;
+    QComboBox *comboSize;
+    QList<QToolBar *>tblist;
+    QMenu *texteditmenu;
+    QTextEdit *textEdit;
+    QString fileName;
 public slots:
     void fileNew();
     void fileOpen();
     void fOpenfile();
-    bool fileSave();
-    bool fileSaveAs();
+    void fileSave();
+    void fileSaveAs();
     void filePrint();
     void filePrintPreview();
     void filePrintPdf();
@@ -170,14 +169,7 @@ public slots:
     QAction *act_insertImage;
     QAction *act_find;
     QAction *act_CHINA;
-private:
-    QComboBox *comboStyle;
-    QFontComboBox *comboFont;
-    QComboBox *comboSize;
-    QList<QToolBar *>tblist;
-    QMenu *texteditmenu;    
-    QTextEdit *textEdit;
-    QString fileName;
+
 
 
 
