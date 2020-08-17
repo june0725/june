@@ -26,6 +26,7 @@ SOURCES += \
     jdockwidget.cpp \
     jmdi.cpp \
     jrtclass.cpp \
+    jsqlite3.cpp \
     jtab.cpp \
     juneobject.cpp \
     main.cpp \
@@ -41,6 +42,7 @@ HEADERS += \
     jdockwidget.h \
     jmdi.h \
     jrtclass.h \
+    jsqlite3.h \
     jtab.h \
     june_main.h \
     juneobject.h \
