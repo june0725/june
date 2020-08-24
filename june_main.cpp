@@ -61,6 +61,8 @@ June_Main::June_Main(QWidget *parent)
           addToolBarBreak(Qt::TopToolBarArea);
       }
        mdiArea->AddMainEdit(tabedit);
+
+
 }
 
 June_Main::~June_Main()

@@ -281,6 +281,7 @@ void J_Word::addnew()
     QSQLITE3_database database;
     database.init(filename);
     QVariantList ls;
+
     if(maxnum<=0)
     {
     ls<<"1";
@@ -296,6 +297,7 @@ void J_Word::addnew()
     <<ui->pa->toPlainText()
     <<ui->example->toPlainText()
     <<ui->translate->toPlainText();
+
     database.AddData(tablename,ls);
     recorddata.clear();
     database.GetallData(tablename,recorddata);

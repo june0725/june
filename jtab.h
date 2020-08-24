@@ -38,6 +38,11 @@
 #endif
 #endif
 
+#include "jsqlite3.h"
+#include "j_word.h"
+#include "sqlitedata.h"
+#include "en_game.h"
+
 QT_BEGIN_NAMESPACE
 class QAction;
 class QComboBox;
@@ -81,9 +86,7 @@ signals:
 private:
     Ui::JTab *ui;    
     QMap<QString,QWidget *>Tablist;
-    QTextEdit *mainedit;
     QString mainfile;
-private:
     QComboBox *comboStyle;
     QFontComboBox *comboFont;
     QComboBox *comboSize;
@@ -91,6 +94,8 @@ private:
     QMenu *texteditmenu;
     QTextEdit *textEdit;
     QString fileName;
+
+
 public slots:
     void fileNew();
     void fileOpen();

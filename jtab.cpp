@@ -18,7 +18,8 @@ JTab::JTab(QWidget *parent) :
 
 texteditmenu=new QMenu(tr("Text and Edit"),this);
    initActions();
-
+   mainfile="Unamefile.txt";
+addTab(textEdit,"Unamefile.txt");
 }
 
 JTab::~JTab()
@@ -36,7 +37,7 @@ void JTab::changeindex(int i)
             {
                 if(QString(w->metaObject()->className())=="QTextEdit")
                 {
-                    if(Tablist.count()>1)
+                    if(Tablist.count()>1&&(QString(Tablist.value(mainfile)->metaObject()->className())=="QTextEdit"))
                     {
                         QString a=textEdit->toHtml();
                         dynamic_cast<QTextEdit *>(Tablist.value(mainfile))->setHtml(a);
@@ -96,12 +97,13 @@ bool JTab::addtabeditfile(QString f)
         {
             QTextEdit *a=new QTextEdit(this);
             a->setFrameShape(QFrame::NoFrame);
-            Tablist.insert(f,a);
-            fileopens(a,f);
+            Tablist.insert(f,a);            
+                fileopens(a,f);
+
         }
 
 
-         if(Tablist.contains(mainfile))
+         if(Tablist.contains(mainfile)&&(QString(Tablist.value(mainfile)->metaObject()->className())=="QTextEdit"))
             {
                 QString values=textEdit->toHtml();
                 dynamic_cast<QTextEdit *>(Tablist.value(mainfile))->setHtml(values);
@@ -147,16 +149,30 @@ void JTab::CloseChild(int i)
 void JTab::DbleClick(int i)
 {
     changeindex(i);
-    if (mainfile.isEmpty()||mainfile=="Unamefile.txt")
-        maybeSave();
-    QString f=textEdit->toHtml();
-    emit addmdi(f);
+    QWidget * w=widget(i);
+   if(QString(w->metaObject()->className())=="QTextEdit")
+   {
+        if (mainfile.isEmpty()||mainfile=="Unamefile.txt")
+            maybeSave();
+        QString f=textEdit->toHtml();
+        emit addmdi(f);
+   }
 }
 void JTab::fileopens(QTextEdit *w, QString fn)
 {
+    if(!QFile::exists(fn))
+    {
+        w->setText("");
+        return ;
+    }
+
     QFile file(fn);
     if (!file.open(QFile::ReadOnly))
+    {
+        w->setText("");
         return ;
+    }
+
 
     QByteArray data = file.readAll();
     QTextCodec *codec = Qt::codecForHtml(data);
@@ -179,15 +195,7 @@ void JTab::fileopens(QTextEdit *w, QString fn)
 }
 void JTab::initActions()
 {
-//    const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/images/open.png"));
-//    QAction *openAct = new QAction(openIcon, tr("&Open..."), this);
-//    openAct->setShortcuts(QKeySequence::Open);
-//    openAct->setStatusTip(tr("Open an existing file"));
-//    connect(openAct, &QAction::triggered, this, &MainWindow::open);
-//    fileMenu->addAction(openAct);
-//    fileToolBar->addAction(openAct);
 
-  //  QMenu *menu = new QMenu(tr("&File"));
     const QIcon newIcon = QIcon::fromTheme("document-new", QIcon(rsrcPath + "/filenew.png"));
     QAction *activenew = new QAction(newIcon,  tr("&New"), this);
     connect(activenew, &QAction::triggered, this, &JTab::fileNew);
@@ -205,7 +213,6 @@ void JTab::initActions()
     const QIcon saveIcon = QIcon::fromTheme("document-save", QIcon(rsrcPath + "/filesave.png"));
     QAction *actionSave = new QAction(saveIcon,  tr("&Save"), this);
     connect(actionSave, &QAction::triggered, this, &JTab::fileSave);
-
     actionSave->setStatusTip(tr("save an file"));
     actionSave->setShortcut(QKeySequence::Save);
     actionSave->setEnabled(false);
@@ -213,23 +220,26 @@ void JTab::initActions()
 
     QAction *activesaveas = new QAction(tr("Save &As..."), this);
     connect(activesaveas, &QAction::triggered, this, &JTab::fileSaveAs);
+    activesaveas->setStatusTip(tr("save as an new file"));
 
 
 #if defined(QT_PRINTSUPPORT_LIB) && QT_CONFIG(printer)
     const QIcon printIcon = QIcon::fromTheme("document-print", QIcon(rsrcPath + "/fileprint.png"));
     QAction *activeprint = new QAction(printIcon, tr("&Print..."), this);
     connect(activeprint, &QAction::triggered, this, &JTab::filePrint);
-
     activeprint->setShortcut(QKeySequence::Print);
+    activeprint->setStatusTip(tr("print a file"));
 
     const QIcon filePrintIcon = QIcon::fromTheme("fileprint", QIcon(rsrcPath + "/fileprint.png"));
     QAction *activeprintview=new QAction(filePrintIcon, tr("Print Preview..."), this);
     connect(activeprintview, &QAction::triggered, this, &JTab::filePrintPreview);
+    activeprintview->setStatusTip(tr("file view first before print"));
 
     const QIcon exportPdfIcon = QIcon::fromTheme("exportpdf", QIcon(rsrcPath + "/exportpdf.png"));
     QAction *activepdf = new QAction(exportPdfIcon, tr("&Export PDF..."), this);
     connect(activepdf, &QAction::triggered, this, &JTab::filePrintPdf);
     activepdf->setShortcut(Qt::CTRL + Qt::Key_D);
+    activepdf->setStatusTip(tr("export a file to pdf format"));
 
 
 #endif
@@ -237,16 +247,19 @@ void JTab::initActions()
     QAction *activequit = new QAction(tr("&Close"), this);
     connect(activequit, &QAction::triggered, this, &JTab::CloseAll);
     activequit->setShortcut(Qt::CTRL + Qt::Key_Q);
+    activequit->setStatusTip(tr("export a file to pdf format"));
 
     const QIcon undoIcon = QIcon::fromTheme("edit-undo", QIcon(rsrcPath + "/editundo.png"));
     actionUndo = new QAction(undoIcon, tr("&Undo"), textEdit);
     connect(actionUndo, &QAction::triggered, textEdit, &QTextEdit::undo);
     actionUndo->setShortcut(QKeySequence::Undo);
+    actionUndo->setStatusTip(tr("export a file to pdf format"));
 
     const QIcon redoIcon = QIcon::fromTheme("edit-redo", QIcon(rsrcPath + "/editredo.png"));
     actionRedo = new QAction(redoIcon, tr("&Redo"), textEdit);
     connect(actionUndo, &QAction::triggered, textEdit, &QTextEdit::undo);
     actionRedo->setShortcut(QKeySequence::Redo);
+    actionRedo->setStatusTip(tr("export a file to pdf format"));
 
 
 #ifndef QT_NO_CLIPBOARD
@@ -254,18 +267,21 @@ void JTab::initActions()
     actionCut = new QAction(cutIcon, tr("Cu&t"), textEdit);
     connect(actionUndo, &QAction::triggered, textEdit, &QTextEdit::cut);
     actionCut->setShortcut(QKeySequence::Cut);
+    actionCut->setStatusTip(tr("export a file to pdf format"));
 
 
     const QIcon copyIcon = QIcon::fromTheme("edit-copy", QIcon(rsrcPath + "/editcopy.png"));
     actionCopy = new QAction(copyIcon, tr("&Copy"), textEdit);
     connect(actionUndo, &QAction::triggered, textEdit, &QTextEdit::copy);
     actionCopy->setShortcut(QKeySequence::Copy);
+    actionCopy->setStatusTip(tr("export a file to pdf format"));
 
 
     const QIcon pasteIcon = QIcon::fromTheme("edit-paste", QIcon(rsrcPath + "/editpaste.png"));
     actionPaste =new QAction(pasteIcon, tr("&Paste"), textEdit);
     connect(actionUndo, &QAction::triggered, textEdit, &QTextEdit::paste);
     actionPaste->setShortcut(QKeySequence::Paste);
+    actionPaste->setStatusTip(tr("export a file to pdf format"));
 
     if (const QMimeData *md = QApplication::clipboard()->mimeData())
         actionPaste->setEnabled(md->hasText());
@@ -401,25 +417,31 @@ void JTab::initActions()
     //插入表格
     QAction * act_insertTable = new QAction(insertIcon,QString("插入表格"),this);
     connect(act_insertTable,SIGNAL(triggered()),this,SLOT(insertTable()));
+    act_insertTable->setStatusTip(tr("export a file to pdf format"));
 
     //插入列表
     QAction * act_insertList = new QAction(insertIcon,QString("插入列表"),this);
     connect(act_insertList,SIGNAL(triggered()),this,SLOT(insertList()));
+    act_insertList->setStatusTip(tr("export a file to pdf format"));
 
     //插入图片
     QAction * act_insertImage = new QAction(insertIcon,QString("插入图片"),this);
     connect(act_insertImage,SIGNAL(triggered()),this,SLOT(insertImage()));
+    act_insertImage->setStatusTip(tr("export a file to pdf format"));
 
 
     QAction * act_insertFrame = new QAction(insertIcon,QString("插入框架"),this);
     connect(act_insertFrame,SIGNAL(triggered()),this,SLOT(insertframe()));
+    act_insertFrame->setStatusTip(tr("export a file to pdf format"));
 
     //查找
     QAction *act_find = new QAction(insertIcon,QString("查找"),this);
     connect(act_find,SIGNAL(triggered()),this,SLOT(textFind()));
+    act_find->setStatusTip(tr("export a file to pdf format"));
 
     QAction *act_CHINA = new QAction(insertIcon,QString("中文"),this);
     connect(act_CHINA,SIGNAL(triggered()),this,SLOT(fOpenfile()));
+    act_CHINA->setStatusTip(tr("export a file to pdf format"));
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     QMenu *a=new QMenu(tr("Files"),this);
@@ -594,6 +616,16 @@ void JTab::insertframe()
 }
 void JTab::textFind()
 {
+    En_Game *game=new En_Game();
+    addtabwidget(game,"/home/pdw/june-Debug/word.db");
+
+//    J_Word * w=new J_Word();
+//    w->NewJWord("/home/pdw/june-Debug/t.db","data");
+//    addtabwidget(w,"/home/pdw/june-Debug/t.db");
+
+//    SQLiteData *maindataformat =new SQLiteData();
+//    addtabwidget(maindataformat,"/home/pdw/june-Debug/main.db");
+
 //    QDialog *dlg = new QDialog(this);       //创建查找对话框
 //     lineEdit = new QLineEdit(dlg);          //创建字符串输入框
 //     QPushButton* btFindNext = new QPushButton(this);    //查找按钮
@@ -607,6 +639,7 @@ void JTab::textFind()
 }
 void JTab::findNext()
 {
+
 
 //        QString string = lineEdit->text();
 //        //查找字符串，查找标志：QTextDocument::FindBackward:向前查找,
@@ -697,23 +730,18 @@ void JTab::fileOpen()
     const QString fn = fileDialog.selectedFiles().first();
     if (QFile::exists(fn))
     {
-        if(fn.endsWith(".j",Qt::CaseInsensitive))
-        {
-
-                return;
-        }
-        else
             addtabeditfile(fn);
     }
     else
     {
-        //fileNew() ;
+        fileNew() ;
     }
 
 
 }
 void JTab::fileSave()
 {    
+
     if(Tablist.count()==0)
     {
         fileSaveAs();
@@ -736,10 +764,6 @@ void JTab::fileSave()
         return;
     }
 
-    if (mainfile.endsWith(".j"))
-    {
-        return;
-    }
 
     if (mainfile.isEmpty()||mainfile=="Unamefile.txt")
     {
@@ -769,6 +793,9 @@ void JTab::fileSave()
     }
     else
     {
+        if(QString(Tablist.value(mainfile)->metaObject()->className())!="QTextEdit")
+            return;
+
         QFile data(mainfile);
         if (data.open(QFile::WriteOnly))
         {
@@ -793,6 +820,7 @@ void JTab::fileSaveAs()
         return;
     const QString fn = fileDialog.selectedFiles().first();
         fileName=fn;
+
     return;
 }
 void JTab::filePrint()
