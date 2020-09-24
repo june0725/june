@@ -108,7 +108,7 @@ bool QSQLITE3_database::GetData(QString table,QMap<QString ,QString> &findvalue,
                 for (QMap<QString,QString>::const_iterator i=findvalue.constBegin();i!=findvalue.constEnd();i++ )
                 {
                     QSqlRecord a=query.record();
-                    if(a.contains(i.key())&&a.value(i.key())==i.value())
+                    if(a.contains(i.key())||a.value(i.key())==i.value())
                     {
                         record.append(a);
                     }

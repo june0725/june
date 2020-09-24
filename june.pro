@@ -33,7 +33,8 @@ SOURCES += \
     june_main.cpp \
     qsqlite3_database.cpp \
     qsqlite3_datastruct.cpp \
-    sqlitedata.cpp
+    sqlitedata.cpp \
+    treeitem.cpp
 
 HEADERS += \
     en_game.h \
@@ -48,7 +49,8 @@ HEADERS += \
     juneobject.h \
     qsqlite3_database.h \
     qsqlite3_datastruct.h \
-    sqlitedata.h
+    sqlitedata.h \
+    treeitem.h
 
 FORMS += \
     en_game.ui \

@@ -16,8 +16,7 @@
 #include "qsqlite3_datastruct.h"
 
 
-enum filemodel{learn=1,exam,rewr,add,newt};
-enum filestyle{listen=1,fill,translate,word,view,choose,diary,notes,program,reminder};
+
 
 //数据库操作类，只对应sqlite3类型,目前不能增加数据表的项目，可以新建数据表
 class QSQLITE3_database
@@ -39,7 +38,7 @@ public:
     bool UpData(QString table,QVariantList &values);//改
     bool DelData(QString table, QString index);//删
     bool NewDatatable(QString table,QStringList &formnames, QMap<QString, QString> &formstyle);//新建数据表
-    //查询包含特定项的值的数据，可以查找某一个字段和值重复的数据
+    //查询包含特定的值的数据，可以查找某一个字段或值的数据
     bool GetData(QString table,QMap<QString ,QString> &findvalue,QList<QSqlRecord> &record);
     //主键默认为第一个，带索引和计数性质的主键，索引一个数据表项
     bool GetindexData(QString table, QString index,QList<QSqlRecord> &record);
