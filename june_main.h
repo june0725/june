@@ -3,21 +3,45 @@
 
 #include <QMainWindow>
 #include <QAction>
-#include <QCloseEvent>
+#include <QApplication>
+#include <QClipboard>
+#include <QColorDialog>
+#include <QComboBox>
+#include <QFontComboBox>
+#include <QFile>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QFontDatabase>
 #include <QMenu>
-#include <QMap>
-#include <QPointer>
-#include <QDate>
-#include <QDockWidget>
-#include <QListWidget>
+#include <QMenuBar>
+#include <QTextCodec>
+#include <QTextEdit>
+#include <QStatusBar>
+#include <QToolBar>
+#include <QTextCursor>
+#include <QTextDocumentWriter>
+#include <QTextList>
+#include <QtDebug>
+#include <QCloseEvent>
+#include <QMessageBox>
+#include <QMimeData>
+#include <QMimeDatabase>
+#if defined(QT_PRINTSUPPORT_LIB)
+#include <QtPrintSupport/qtprintsupportglobal.h>
+#if QT_CONFIG(printer)
+#if QT_CONFIG(printdialog)
+#include <QPrintDialog>
+#endif
+#include <QPrinter>
+#if QT_CONFIG(printpreviewdialog)
+#include <QPrintPreviewDialog>
+#endif
+#endif
+#endif
 
-#include "jmdi.h"
-#include "jtab.h"
-#include "jdockwidget.h"
-#include "sqlitedata.h"
-#include "j_word.h"
-
-
+#include "jmdiarea.h"
+#include "jtextedit.h"
+#include "jdockwidgets.h"
 QT_BEGIN_NAMESPACE
 class QAction;
 class QComboBox;
@@ -37,14 +61,67 @@ class June_Main : public QMainWindow
 public:
     June_Main(QWidget *parent = nullptr);
     ~June_Main();    
+public slots:
+    void sactionfont(QString f);
+    void sactionsize(QString s);
+    void sactioncolor(QString c);
+    ///////////////////
+    void sactionadd();
+    void sactionblack();
+    void sactioncatalog();
+    void sactioncenter();
+    void sactioncodestyle();
+    void sactionexam();
+    void sactionexplain();
+    void sactionform();
+    void sactionfound();
+    void sactionfream();
+    void sactionguess();
+    void sactionhelp();
+    void sactionhtml();
+    void sactionitalic();
+    void sactionjust();
+    void sactionleft();
+    void sactionlist();
+    void sactionlisten();
+    void sactionnew();
+    void sactionopen();
+    void sactionpdf();
+    void sactionpicture();
+    void sactionplain();
+    void sactionpreview();
+    void sactionprint();
+    void sactionprogress();
+    void sactionread();
+    void sactionright();
+    void sactionsave();
+    void sactionset();
+    void sactionsetting();
+    void sactionsort();
+    void sactionsource();
+    void sactionspeak();
+    void sactionstyle();
+    void sactiontab();
+    void sactiontable();
+    void sactiontest();
+    void sactiontext();
+    void sactionticket();
+    void sactiontips();
+    void sactionunder();
+    void sactionwrite();
 
+
+public:
     //tabwidget
-    JTab *tabedit;
+   // JTab *tabedit;
     //mdi
-    JMdi *mdiArea;
+    JMdiArea *mdiArea;
     //dock
-    QList<JDockWidget *>dock;
-
+    QList<JDockWidgets *>dock;
+    QComboBox *comboStyle;
+    QFontComboBox *comboFont;
+    QComboBox *comboSize;
+    QComboBox *comboColor;
 private:
         Ui::June_Main *ui;
 

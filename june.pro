@@ -22,12 +22,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     en_game.cpp \
     en_gameitem.cpp \
+    j_edit.cpp \
     j_word.cpp \
     jdockwidget.cpp \
+    jdockwidgets.cpp \
     jmdi.cpp \
+    jmdiarea.cpp \
     jrtclass.cpp \
     jsqlite3.cpp \
     jtab.cpp \
+    jtextedit.cpp \
     juneobject.cpp \
     main.cpp \
     june_main.cpp \
@@ -39,12 +43,16 @@ SOURCES += \
 HEADERS += \
     en_game.h \
     en_gameitem.h \
+    j_edit.h \
     j_word.h \
     jdockwidget.h \
+    jdockwidgets.h \
     jmdi.h \
+    jmdiarea.h \
     jrtclass.h \
     jsqlite3.h \
     jtab.h \
+    jtextedit.h \
     june_main.h \
     juneobject.h \
     qsqlite3_database.h \
@@ -54,6 +62,7 @@ HEADERS += \
 
 FORMS += \
     en_game.ui \
+    j_edit.ui \
     j_twodata.ui \
     j_word.ui \
     jdockwidget.ui \

@@ -6,8 +6,7 @@
 #include <QStringList>
 #include <QDebug>
 
-enum filemodel{learn=1,exam,rewr,add,newt};
-enum filestyle{listen=1,fill,translate,word,view,choose,diary,notes,program,reminder};
+
 
 //数据表操作sql类，负责产生对应数据表的各个操作sql语句
 class QSQLite3_DataStruct

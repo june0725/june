@@ -41,6 +41,10 @@ class J_Word;
 /// ///////////
 /// ///////////////
 ///
+///
+
+enum filemodel{learn=1,add,exam,rewr};
+
 class J_Word : public QDialog
 {
     Q_OBJECT

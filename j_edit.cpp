@@ -1,243 +1,73 @@
+#include "j_edit.h"
+#include "ui_j_edit.h"
 
-#include "jtab.h"
-#include "ui_jtab.h"
-#include "june_main.h"
-
-JTab::JTab(QWidget *parent) :
-    QTabWidget(parent),
-    ui(new Ui::JTab)
+J_Edit::J_Edit(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::J_Edit)
 {
     ui->setupUi(this);
-   setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Ignored);
-   textEdit = new QTextEdit(this);
-   textEdit->setFrameShape(QFrame::NoFrame);
-   connect(textEdit, &QTextEdit::currentCharFormatChanged,
-           this, &JTab::currentCharFormatChanged);
-   connect(textEdit, &QTextEdit::cursorPositionChanged,
-           this, &JTab::cursorPositionChanged);
+    textEdit = new QTextEdit(this);
+    textEdit->setFrameShape(QFrame::NoFrame);
+    connect(textEdit, &QTextEdit::currentCharFormatChanged,
+            this, &J_Edit::currentCharFormatChanged);
+    connect(textEdit, &QTextEdit::cursorPositionChanged,
+            this, &J_Edit::cursorPositionChanged);
 
-texteditmenu=new QMenu(tr("Text and Edit"),this);
-   initActions();
-   mainfile="Unamefile.txt";
-addTab(textEdit,"Unamefile.txt");
+ texteditmenu=new QMenu(tr("Text and Edit"),this);
+    initActions();
 }
 
-JTab::~JTab()
+J_Edit::~J_Edit()
 {
     delete ui;
 }
 
-void JTab::changeindex(int i)
-{
-         QWidget * w=widget(i);
-        QMap<QString, QWidget *>::const_iterator b = Tablist.constBegin();
-        while (b != Tablist.constEnd())
-        {
-            if(b.value()==w)
-            {
-                if(QString(w->metaObject()->className())=="QTextEdit")
-                {
-                    if(Tablist.count()>1&&(QString(Tablist.value(mainfile)->metaObject()->className())=="QTextEdit"))
-                    {
-                        QString a=textEdit->toHtml();
-                        dynamic_cast<QTextEdit *>(Tablist.value(mainfile))->setHtml(a);
-                    }
-                 }
 
-                  mainfile=b.key();
-                    tabfresh();
-                    return;
-
-                break;
-            }
-            ++b;
-        }
-
-
-}
-void JTab::tabfresh()
-{
-    clear();
-    QMap<QString, QWidget *>::const_iterator i = Tablist.constBegin();
-    while (i != Tablist.constEnd())
-    {
-            if(i.key()==mainfile)
-            {
-                if(QString(i.value()->metaObject()->className())=="QTextEdit")
-                {
-                QString values=dynamic_cast<QTextEdit *>(i.value())->toHtml();
-                textEdit->setHtml(values);
-                addTab(textEdit,QFileInfo(i.key()).fileName());
-                setCurrentWidget(textEdit);
-                }
-                else
-                {
-                    addTab(i.value(),QFileInfo(i.key()).fileName());
-                    setCurrentWidget(i.value());
-                }
-            }
-            else
-            {
-                 addTab(i.value(),QFileInfo(i.key()).fileName());
-            }
-        ++i;
-    }
-
-
-}
-void JTab::addtabwidget(QWidget *w,QString f)
-{
-    Tablist.insert(f,w);
-    mainfile=f;
-    tabfresh();
-}
-bool JTab::addtabeditfile(QString f)
-{
-        if(!Tablist.contains(f))
-        {
-            QTextEdit *a=new QTextEdit(this);
-            a->setFrameShape(QFrame::NoFrame);
-            Tablist.insert(f,a);            
-                fileopens(a,f);
-
-        }
-
-
-         if(Tablist.contains(mainfile)&&(QString(Tablist.value(mainfile)->metaObject()->className())=="QTextEdit"))
-            {
-                QString values=textEdit->toHtml();
-                dynamic_cast<QTextEdit *>(Tablist.value(mainfile))->setHtml(values);
-            }
-
-            mainfile=f;
-            tabfresh();
-        return true;
-}
-void JTab::CloseChild(int i)
-{
-    if(Tablist.count()>1)
-        changeindex(i);
-    else
-        changeindex(0);
-
-    QWidget * w=widget(i);
-   if(QString(w->metaObject()->className())=="QTextEdit")
-   {
-            maybeSave();
-            removeTab(indexOf(textEdit));
-            Tablist.remove(mainfile);
-   }
-   else
-   {
-       removeTab(indexOf(w));
-       QMap<QString, QWidget *>::const_iterator a = Tablist.constBegin();
-       while (a != Tablist.constEnd())
-       {
-           if(a.value()==w)
-           {
-               a.value()->deleteLater();
-               Tablist.remove(a.key());
-               break;
-           }
-           ++a;
-       }
-
-
-   }
-
-}
-void JTab::DbleClick(int i)
-{
-    changeindex(i);
-    QWidget * w=widget(i);
-   if(QString(w->metaObject()->className())=="QTextEdit")
-   {
-        if (mainfile.isEmpty()||mainfile=="Unamefile.txt")
-            maybeSave();
-        QString f=textEdit->toHtml();
-        emit addmdi(f);
-   }
-}
-void JTab::fileopens(QTextEdit *w, QString fn)
-{
-    if(!QFile::exists(fn))
-    {
-        w->setText("");
-        return ;
-    }
-
-    QFile file(fn);
-    if (!file.open(QFile::ReadOnly))
-    {
-        w->setText("");
-        return ;
-    }
-
-
-    QByteArray data = file.readAll();
-    QTextCodec *codec = Qt::codecForHtml(data);
-    QString str = codec->toUnicode(data);
-    if (Qt::mightBeRichText(str)) {
-        QUrl baseUrl = (fn.front() == QLatin1Char(':') ? QUrl(fn) : QUrl::fromLocalFile(fn)).adjusted(QUrl::RemoveFilename);
-        w->document()->setBaseUrl(baseUrl);
-        w->setHtml(str);
-    } else {
-#if QT_CONFIG(textmarkdownreader)
-        QMimeDatabase db;
-        if (db.mimeTypeForFileNameAndData(fn, data).name() == QLatin1String("text/markdown"))
-            w->setMarkdown(QString::fromUtf8(data));
-        else
-#endif
-            w->setPlainText(QString::fromUtf8(data));
-    }
-
-
-}
-void JTab::initActions()
+void J_Edit::initActions()
 {
 
     const QIcon newIcon = QIcon::fromTheme("document-new", QIcon(rsrcPath + "/filenew.png"));
     QAction *activenew = new QAction(newIcon,  tr("&New"), this);
-    connect(activenew, &QAction::triggered, this, &JTab::fileNew);
+    connect(activenew, &QAction::triggered, this, &J_Edit::fileNew);
     activenew->setStatusTip(tr("new an file"));
     activenew->setShortcut(QKeySequence::New);
 
 
     const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(rsrcPath + "/fileopen.png"));
     QAction *activeopen = new QAction(openIcon,  tr("&Open..."), this);
-    connect(activeopen, &QAction::triggered, this, &JTab::fileOpen);
+    connect(activeopen, &QAction::triggered, this, &J_Edit::fileOpen);
     activeopen->setStatusTip(tr("open an existing file"));
     activeopen->setShortcut(QKeySequence::Open);
 
 
     const QIcon saveIcon = QIcon::fromTheme("document-save", QIcon(rsrcPath + "/filesave.png"));
     QAction *actionSave = new QAction(saveIcon,  tr("&Save"), this);
-    connect(actionSave, &QAction::triggered, this, &JTab::fileSave);
+    connect(actionSave, &QAction::triggered, this, &J_Edit::fileSave);
     actionSave->setStatusTip(tr("save an file"));
     actionSave->setShortcut(QKeySequence::Save);
     actionSave->setEnabled(false);
 
 
     QAction *activesaveas = new QAction(tr("Save &As..."), this);
-    connect(activesaveas, &QAction::triggered, this, &JTab::fileSaveAs);
+    connect(activesaveas, &QAction::triggered, this, &J_Edit::fileSaveAs);
     activesaveas->setStatusTip(tr("save as an new file"));
 
 
 #if defined(QT_PRINTSUPPORT_LIB) && QT_CONFIG(printer)
     const QIcon printIcon = QIcon::fromTheme("document-print", QIcon(rsrcPath + "/fileprint.png"));
     QAction *activeprint = new QAction(printIcon, tr("&Print..."), this);
-    connect(activeprint, &QAction::triggered, this, &JTab::filePrint);
+    connect(activeprint, &QAction::triggered, this, &J_Edit::filePrint);
     activeprint->setShortcut(QKeySequence::Print);
     activeprint->setStatusTip(tr("print a file"));
 
     const QIcon filePrintIcon = QIcon::fromTheme("fileprint", QIcon(rsrcPath + "/fileprint.png"));
     QAction *activeprintview=new QAction(filePrintIcon, tr("Print Preview..."), this);
-    connect(activeprintview, &QAction::triggered, this, &JTab::filePrintPreview);
+    connect(activeprintview, &QAction::triggered, this, &J_Edit::filePrintPreview);
     activeprintview->setStatusTip(tr("file view first before print"));
 
     const QIcon exportPdfIcon = QIcon::fromTheme("exportpdf", QIcon(rsrcPath + "/exportpdf.png"));
     QAction *activepdf = new QAction(exportPdfIcon, tr("&Export PDF..."), this);
-    connect(activepdf, &QAction::triggered, this, &JTab::filePrintPdf);
+    connect(activepdf, &QAction::triggered, this, &J_Edit::filePrintPdf);
     activepdf->setShortcut(Qt::CTRL + Qt::Key_D);
     activepdf->setStatusTip(tr("export a file to pdf format"));
 
@@ -245,7 +75,7 @@ void JTab::initActions()
 #endif
 
     QAction *activequit = new QAction(tr("&Close"), this);
-    connect(activequit, &QAction::triggered, this, &JTab::CloseAll);
+    connect(activequit, &QAction::triggered, this, &J_Edit::CloseAll);
     activequit->setShortcut(Qt::CTRL + Qt::Key_Q);
     activequit->setStatusTip(tr("export a file to pdf format"));
 
@@ -289,7 +119,7 @@ void JTab::initActions()
 
     const QIcon boldIcon = QIcon::fromTheme("format-text-bold", QIcon(rsrcPath + "/textbold.png"));
     actionTextBold = new QAction(boldIcon, tr("&Bold"), this);
-    connect(actionTextBold, &QAction::triggered, this, &JTab::textBold);
+    connect(actionTextBold, &QAction::triggered, this, &J_Edit::textBold);
     actionTextBold->setShortcut(Qt::CTRL + Qt::Key_B);
 
     QFont bold;
@@ -299,7 +129,7 @@ void JTab::initActions()
 
     const QIcon italicIcon = QIcon::fromTheme("format-text-italic", QIcon(rsrcPath + "/textitalic.png"));
     actionTextItalic = new QAction(italicIcon, tr("&Italic"), this);
-    connect(actionTextItalic, &QAction::triggered, this, &JTab::textItalic);
+    connect(actionTextItalic, &QAction::triggered, this, &J_Edit::textItalic);
     actionTextItalic->setShortcut(Qt::CTRL + Qt::Key_I);
     QFont italic;
     italic.setItalic(true);
@@ -309,7 +139,7 @@ void JTab::initActions()
 
     const QIcon underlineIcon = QIcon::fromTheme("format-text-underline", QIcon(rsrcPath + "/textunder.png"));
     actionTextUnderline = new QAction(underlineIcon, tr("&Underline"), this);
-    connect(actionTextUnderline, &QAction::triggered, this, &JTab::textUnderline);
+    connect(actionTextUnderline, &QAction::triggered, this, &J_Edit::textUnderline);
     actionTextUnderline->setShortcut(Qt::CTRL + Qt::Key_U);
     QFont underline;
     underline.setUnderline(true);
@@ -342,17 +172,17 @@ void JTab::initActions()
 
     const QIcon indentMoreIcon = QIcon::fromTheme("format-indent-more", QIcon(rsrcPath + "/format-indent-more.png"));
     actionIndentMore = new QAction(indentMoreIcon, tr("&Indent"), this);
-    connect(actionIndentMore, &QAction::triggered, this, &JTab::indent);
+    connect(actionIndentMore, &QAction::triggered, this, &J_Edit::indent);
     actionIndentMore->setShortcut(Qt::CTRL + Qt::Key_BracketRight);
 
     const QIcon indentLessIcon = QIcon::fromTheme("format-indent-less", QIcon(rsrcPath + "/format-indent-less.png"));
     actionIndentLess = new QAction(indentLessIcon, tr("&Unindent"), this);
-    connect(actionIndentLess, &QAction::triggered, this, &JTab::unindent);
+    connect(actionIndentLess, &QAction::triggered, this, &J_Edit::unindent);
     actionIndentLess->setShortcut(Qt::CTRL + Qt::Key_BracketLeft);
 
     // Make sure the alignLeft  is always left of the alignRight
     alignGroup = new QActionGroup(this);
-    connect(alignGroup, &QActionGroup::triggered, this, &JTab::textAlign);
+    connect(alignGroup, &QActionGroup::triggered, this, &J_Edit::textAlign);
 
     if (QApplication::isLeftToRight()) {
         alignGroup->addAction(actionAlignLeft);
@@ -369,11 +199,11 @@ void JTab::initActions()
     QPixmap pix(16, 16);
     pix.fill(Qt::black);
     actionTextColor = new QAction(pix, tr("&Color..."), this);
-    connect(actionTextColor, &QAction::triggered, this, &JTab::textColor);
+    connect(actionTextColor, &QAction::triggered, this, &J_Edit::textColor);
 
     const QIcon checkboxIcon = QIcon::fromTheme("status-checkbox-checked", QIcon(rsrcPath + "/checkbox-checked.png"));
     actionToggleCheckState = new QAction(checkboxIcon, tr("Chec&ked"), this);
-    connect(actionToggleCheckState, &QAction::triggered, this, &JTab::setChecked);
+    connect(actionToggleCheckState, &QAction::triggered, this, &J_Edit::setChecked);
     actionToggleCheckState->setShortcut(Qt::CTRL + Qt::Key_K);
     actionToggleCheckState->setCheckable(true);
 
@@ -397,10 +227,10 @@ void JTab::initActions()
     comboStyle->addItem("Heading 5");
     comboStyle->addItem("Heading 6");
 
-    connect(comboStyle, QOverload<int>::of(&QComboBox::activated), this, &JTab::textStyle);
+    connect(comboStyle, QOverload<int>::of(&QComboBox::activated), this, &J_Edit::textStyle);
 
     comboFont = new QFontComboBox();
-    connect(comboFont, &QComboBox::textActivated, this, &JTab::textFamily);
+    connect(comboFont, &QComboBox::textActivated, this, &J_Edit::textFamily);
 
     comboSize = new QComboBox();
     comboSize->setObjectName("comboSize");
@@ -410,7 +240,7 @@ void JTab::initActions()
     for (int size : standardSizes)
         comboSize->addItem(QString::number(size));
     comboSize->setCurrentIndex(standardSizes.indexOf(QApplication::font().pointSize()));
-    connect(comboSize, &QComboBox::textActivated, this, &JTab::textSize);
+    connect(comboSize, &QComboBox::textActivated, this, &J_Edit::textSize);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
    const QIcon insertIcon = QIcon::fromTheme("insertIcon", QIcon(":/images/june_icon.ico"));
@@ -568,10 +398,10 @@ connect(textEdit, &QTextEdit::copyAvailable, actionCut, &QAction::setEnabled);
 actionCopy->setEnabled(false);
 connect(textEdit, &QTextEdit::copyAvailable, actionCopy, &QAction::setEnabled);
 
-connect(QApplication::clipboard(), &QClipboard::dataChanged, this, &JTab::clipboardDataChanged);
+connect(QApplication::clipboard(), &QClipboard::dataChanged, this, &J_Edit::clipboardDataChanged);
 #endif
 }
-void JTab::insertTable()
+void J_Edit::insertTable()
 {
     QTextCursor cursor =textEdit->textCursor();
     QTextTableFormat tableFormat;
@@ -579,7 +409,7 @@ void JTab::insertTable()
     tableFormat.setCellSpacing(2);
     cursor.insertTable(2,2,tableFormat);
 }
-void JTab::insertList()
+void J_Edit::insertList()
 {
 
         QTextCursor cursor = textEdit->textCursor();
@@ -587,7 +417,7 @@ void JTab::insertList()
         listFormat.setStyle(QTextListFormat::ListDecimal);
         cursor.insertList(listFormat);
 }
-void JTab::insertImage()
+void J_Edit::insertImage()
 {
 //    QString file = QFileDialog::getOpenFileName(this, tr("Select an image"),
 //                                  ".");
@@ -603,7 +433,7 @@ void JTab::insertImage()
     imageFormat.setName( ":/images/june_icon.png");
     cursor.insertImage(imageFormat);
 }
-void JTab::insertframe()
+void J_Edit::insertframe()
 {
 //    QTextFrameFormat frameFormat2;
 //    frameFormat2.setBackground(Qt::lightGray);    //设置背景色
@@ -616,10 +446,9 @@ void JTab::insertframe()
 
     qDebug()<<textEdit->toPlainText();
 }
-void JTab::textFind()
+void J_Edit::textFind()
 {
-    En_Game *game=new En_Game();
-    addtabwidget(game,"/home/pdw/june-Debug/word.db");
+
 
 //    J_Word * w=new J_Word();
 //    w->NewJWord("/home/pdw/june-Debug/t.db","data");
@@ -639,7 +468,7 @@ void JTab::textFind()
 //     dlg->setLayout(layout);
 //     dlg->show();
 }
-void JTab::findNext()
+void J_Edit::findNext()
 {
 
 
@@ -652,35 +481,17 @@ void JTab::findNext()
 //                        .arg(textEdit->textCursor().columnNumber());
 //        }
 }
-bool JTab::maybeSave()
+bool J_Edit::maybeSave()
 {
-    if(Tablist.count()>0)
-    {
-    const QMessageBox::StandardButton ret =
-        QMessageBox::warning(this, QCoreApplication::applicationName(),
-                             tr("The document has been modified.\n"
-                                "Do you want to save your changes?"),
-                             QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-    if (ret == QMessageBox::Save)
-        fileSave();
-    else if (ret == QMessageBox::Cancel)
-        return false;
-    }
-    else
-    {
-        if(!textEdit->toPlainText().isEmpty())
-            fileSave();
-    }
+
 
 
     return true;
 }
-void JTab::fileNew()
+void J_Edit::fileNew()
 {
-     maybeSave();     
-    addtabeditfile("Unamefile.txt");
 }
-void JTab::fOpenfile()
+void J_Edit::fOpenfile()
 {
     //////////////////中文编码显示
     QFileDialog fileDialog(this, tr("Open File..."));
@@ -719,7 +530,7 @@ void JTab::fOpenfile()
 
     return;
 }
-void JTab::fileOpen()
+void J_Edit::fileOpen()
 {
     QFileDialog fileDialog(this, tr("Open File..."));
     fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
@@ -732,7 +543,7 @@ void JTab::fileOpen()
     const QString fn = fileDialog.selectedFiles().first();
     if (QFile::exists(fn))
     {
-            addtabeditfile(fn);
+
     }
     else
     {
@@ -741,80 +552,12 @@ void JTab::fileOpen()
 
 
 }
-void JTab::fileSave()
-{    
+void J_Edit::fileSave()
+{
 
-    if(Tablist.count()==0)
-    {
-        fileSaveAs();
-        if(!fileName.isEmpty())
-        {
-            QFile data(fileName);
-            if (data.open(QFile::WriteOnly))
-            {
-                QTextStream out(&data);
-                out <<textEdit->toHtml();
-                out.flush();
-            }
-            mainfile=fileName;
-            addtabeditfile(mainfile);
-            tabfresh();
-        }
-        else
-            textEdit->clear();
-
-        return;
-    }
-
-
-    if (mainfile.isEmpty()||mainfile=="Unamefile.txt")
-    {
-        fileSaveAs();
-        if(!fileName.isEmpty())
-        {
-            QFile data(fileName);
-            if (data.open(QFile::WriteOnly))
-            {
-                QTextStream out(&data);
-                out <<textEdit->toHtml();
-                out.flush();
-                removeTab(indexOf(textEdit));
-                Tablist.remove(mainfile);
-            }
-            mainfile=fileName;
-        }
-        else
-        {
-            if(Tablist.count()>1)
-                mainfile=Tablist.firstKey();
-            else
-                removeTab(indexOf(textEdit));
-
-            return;
-        }
-    }
-    else
-    {
-        if(QString(Tablist.value(mainfile)->metaObject()->className())!="QTextEdit")
-            return;
-
-        QFile data(mainfile);
-        if (data.open(QFile::WriteOnly))
-        {
-            QTextStream out(&data);
-            out <<textEdit->toHtml();
-            out.flush();
-            removeTab(indexOf(textEdit));
-            Tablist.remove(mainfile);
-
-        }
-    }
-
-    addtabeditfile(mainfile);
-        tabfresh();
 
 }
-void JTab::fileSaveAs()
+void J_Edit::fileSaveAs()
 {
     QFileDialog fileDialog(this, tr("Save as..."));
     fileDialog.setAcceptMode(QFileDialog::AcceptSave);
@@ -825,7 +568,7 @@ void JTab::fileSaveAs()
 
     return;
 }
-void JTab::filePrint()
+void J_Edit::filePrint()
 {
 #if defined(QT_PRINTSUPPORT_LIB) && QT_CONFIG(printdialog)
     QPrinter printer(QPrinter::HighResolution);
@@ -838,16 +581,16 @@ void JTab::filePrint()
     delete dlg;
 #endif
 }
-void JTab::filePrintPreview()
+void J_Edit::filePrintPreview()
 {
 #if defined(QT_PRINTSUPPORT_LIB) && QT_CONFIG(printpreviewdialog)
     QPrinter printer(QPrinter::HighResolution);
     QPrintPreviewDialog preview(&printer, this);
-    connect(&preview, &QPrintPreviewDialog::paintRequested, this, &JTab::printPreview);
+    connect(&preview, &QPrintPreviewDialog::paintRequested, this, &J_Edit::printPreview);
     preview.exec();
 #endif
 }
-void JTab::printPreview(QPrinter *printer)
+void J_Edit::printPreview(QPrinter *printer)
 {
 #if defined(QT_PRINTSUPPORT_LIB) && QT_CONFIG(printer)
     textEdit->print(printer);
@@ -855,7 +598,7 @@ void JTab::printPreview(QPrinter *printer)
     Q_UNUSED(printer)
 #endif
 }
-void JTab::filePrintPdf()
+void J_Edit::filePrintPdf()
 {
 #if defined(QT_PRINTSUPPORT_LIB) && QT_CONFIG(printer)
 //! [0]
@@ -873,31 +616,31 @@ void JTab::filePrintPdf()
 
 #endif
 }
-void JTab::textBold()
+void J_Edit::textBold()
 {
     QTextCharFormat fmt;
     fmt.setFontWeight(actionTextBold->isChecked() ? QFont::Bold : QFont::Normal);
     mergeFormatOnWordOrSelection(fmt);
 }
-void JTab::textUnderline()
+void J_Edit::textUnderline()
 {
     QTextCharFormat fmt;
     fmt.setFontUnderline(actionTextUnderline->isChecked());
     mergeFormatOnWordOrSelection(fmt);
 }
-void JTab::textItalic()
+void J_Edit::textItalic()
 {
     QTextCharFormat fmt;
     fmt.setFontItalic(actionTextItalic->isChecked());
     mergeFormatOnWordOrSelection(fmt);
 }
-void JTab::textFamily(const QString &f)
+void J_Edit::textFamily(const QString &f)
 {
     QTextCharFormat fmt;
     fmt.setFontFamily(f);
     mergeFormatOnWordOrSelection(fmt);
 }
-void JTab::textSize(const QString &p)
+void J_Edit::textSize(const QString &p)
 {
     qreal pointSize = p.toFloat();
     if (p.toFloat() > 0) {
@@ -906,7 +649,7 @@ void JTab::textSize(const QString &p)
         mergeFormatOnWordOrSelection(fmt);
     }
 }
-void JTab::textStyle(int styleIndex)
+void J_Edit::textStyle(int styleIndex)
 {
     QTextCursor cursor = textEdit->textCursor();
     QTextListFormat::Style style = QTextListFormat::ListStyleUndefined;
@@ -989,7 +732,7 @@ void JTab::textStyle(int styleIndex)
 
     cursor.endEditBlock();
 }
-void JTab::textColor()
+void J_Edit::textColor()
 {
     QColor col = QColorDialog::getColor(textEdit->textColor(), this);
     if (!col.isValid())
@@ -999,7 +742,7 @@ void JTab::textColor()
     mergeFormatOnWordOrSelection(fmt);
     colorChanged(col);
 }
-void JTab::textAlign(QAction *a)
+void J_Edit::textAlign(QAction *a)
 {
     if (a == actionAlignLeft)
         textEdit->setAlignment(Qt::AlignLeft | Qt::AlignAbsolute);
@@ -1010,19 +753,19 @@ void JTab::textAlign(QAction *a)
     else if (a == actionAlignJustify)
         textEdit->setAlignment(Qt::AlignJustify);
 }
-void JTab::setChecked(bool checked)
+void J_Edit::setChecked(bool checked)
 {
     textStyle(checked ? 5 : 4);
 }
-void JTab::indent()
+void J_Edit::indent()
 {
     modifyIndentation(1);
 }
-void JTab::unindent()
+void J_Edit::unindent()
 {
     modifyIndentation(-1);
 }
-void JTab::modifyIndentation(int amount)
+void J_Edit::modifyIndentation(int amount)
 {
     QTextCursor cursor = textEdit->textCursor();
     cursor.beginEditBlock();
@@ -1045,12 +788,12 @@ void JTab::modifyIndentation(int amount)
     }
     cursor.endEditBlock();
 }
-void JTab::currentCharFormatChanged(const QTextCharFormat &format)
+void J_Edit::currentCharFormatChanged(const QTextCharFormat &format)
 {
     fontChanged(format.font());
     colorChanged(format.foreground().color());
 }
-void JTab::cursorPositionChanged()
+void J_Edit::cursorPositionChanged()
 {
     alignmentChanged(textEdit->alignment());
     QTextList *list = textEdit->textCursor().currentList();
@@ -1102,29 +845,19 @@ void JTab::cursorPositionChanged()
         comboStyle->setCurrentIndex(headingLevel ? headingLevel + 10 : 0);
     }
 }
-void JTab::clipboardDataChanged()
+void J_Edit::clipboardDataChanged()
 {
 #ifndef QT_NO_CLIPBOARD
     if (const QMimeData *md = QApplication::clipboard()->mimeData())
         actionPaste->setEnabled(md->hasText());
 #endif
 }
-void JTab::CloseAll()
+void J_Edit::CloseAll()
 {
-    if(Tablist.count()==0)
-    {
-        maybeSave();
-        return;
-    }
 
-
-    while (Tablist.count()>0)
-        {
-            CloseChild(0);
-        }
 
 }
-void JTab::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
+void J_Edit::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
 {
     QTextCursor cursor = textEdit->textCursor();
     if (!cursor.hasSelection())
@@ -1132,7 +865,7 @@ void JTab::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
     cursor.mergeCharFormat(format);
     textEdit->mergeCurrentCharFormat(format);
 }
-void JTab::fontChanged(const QFont &f)
+void J_Edit::fontChanged(const QFont &f)
 {
     comboFont->setCurrentIndex(comboFont->findText(QFontInfo(f).family()));
     comboSize->setCurrentIndex(comboSize->findText(QString::number(f.pointSize())));
@@ -1140,13 +873,13 @@ void JTab::fontChanged(const QFont &f)
     actionTextItalic->setChecked(f.italic());
     actionTextUnderline->setChecked(f.underline());
 }
-void JTab::colorChanged(const QColor &c)
+void J_Edit::colorChanged(const QColor &c)
 {
     QPixmap pix(16, 16);
     pix.fill(c);
     actionTextColor->setIcon(pix);
 }
-void JTab::alignmentChanged(Qt::Alignment a)
+void J_Edit::alignmentChanged(Qt::Alignment a)
 {
     if (a & Qt::AlignLeft)
         actionAlignLeft->setChecked(true);
@@ -1157,5 +890,3 @@ void JTab::alignmentChanged(Qt::Alignment a)
     else if (a & Qt::AlignJustify)
         actionAlignJustify->setChecked(true);
 }
-
-
